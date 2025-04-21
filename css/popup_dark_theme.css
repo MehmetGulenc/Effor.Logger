@@ -1,0 +1,198 @@
+/* --- Değişkenler (log_dark_theme.css'den) --- */
+:root {
+    --primary-color: #58a6ff;
+    --bg-color: #0d1117;
+    --content-bg: #161b22; /* Popup için kutu arkaplanı */
+    --border-color: #30363d;
+    --text-color: #c9d1d9;
+    --text-secondary-color: #8b949e;
+    --hover-bg-color: #21262d;
+    --input-bg: #0d1117;
+    --input-border: #30363d;
+    --input-text-color: var(--text-color);
+    --button-danger: #f85149;
+    --button-copy: #3fb950; /* Kaydet butonu için yeşil */
+    --button-copy-hover-bg: #2ea043;
+    --button-copy-hover-text: #ffffff;
+    --error-color: var(--button-danger);
+    --link-color: var(--primary-color);
+
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --border-radius: 6px; /* GitHub tarzı */
+}
+
+/* --- Genel Popup Stilleri --- */
+body {
+    font-family: var(--font-family);
+    width: 380px; /* Genişletildi */
+    margin: 0;
+    padding: 0; /* Padding container'a */
+    background-color: var(--content-bg); /* Kutu arkaplanı */
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+.container {
+    padding: 20px 25px; /* İç boşluk */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Elemanlar arası boşluk */
+}
+
+h2 {
+    margin: 0 0 15px 0; /* Alt boşluk artırıldı */
+    font-size: 1.2em; /* Biraz daha büyük */
+    font-weight: 600;
+    text-align: center;
+    color: var(--primary-color); /* Başlık rengi */
+    display: flex; /* İkonu hizalamak için */
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Form Elemanları --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* label { display: none; } Placeholder yeterli */
+
+input[type="text"]#log-text-input-popup { /* ID güncellendi */
+    padding: 11px 14px; /* Padding ayarlandı */
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem; /* Font büyütüldü */
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]#log-text-input-popup::placeholder {
+    color: var(--text-secondary-color);
+    opacity: 0.7;
+}
+
+input[type="text"]#log-text-input-popup:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+
+/* --- Zaman Seçenekleri (log_dark_theme.css'den uyarlandı) --- */
+.time-options-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 5px; /* Üstteki inputtan ayır */
+}
+
+.time-options-label {
+    font-size: 0.9em;
+    color: var(--text-secondary-color);
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.time-options-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Boşluk biraz arttı */
+}
+
+.time-option input[type="radio"] {
+    opacity: 0;
+    position: fixed;
+    width: 0;
+}
+
+.time-option label {
+    display: inline-block;
+    padding: 6px 14px; /* Buton boyutu */
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Pill shape */
+    cursor: pointer;
+    font-size: 0.85em; /* Font boyutu */
+    color: var(--text-secondary-color);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    user-select: none;
+}
+.time-option input[type="radio"]:checked + label {
+    background-color: var(--primary-color);
+    color: var(--bg-color); /* Koyu arkaplan rengi kontrast için */
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+.time-option label:hover {
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+.time-option input[type="radio"]:checked + label:hover {
+    background-color: #4a9dec;
+    border-color: #4a9dec;
+}
+.time-option input[type="radio"]:focus-visible + label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* --- Butonlar ve Diğerleri --- */
+button#save-button-popup { /* ID güncellendi */
+    padding: 10px 20px; /* Daha büyük buton */
+    background-color: var(--button-copy);
+    color: var(--button-copy-hover-text); /* Beyaz */
+    border: 1px solid var(--button-copy);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem; /* Font boyutu */
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    width: 100%;
+    margin-top: 10px; /* Üst boşluk */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* İkon ve metin arası */
+}
+
+button#save-button-popup:hover {
+    background-color: var(--button-copy-hover-bg);
+    border-color: var(--button-copy-hover-bg);
+}
+
+.error { /* ID'den class'a */
+    color: var(--error-color);
+    font-size: 0.85rem; /* Biraz daha büyük */
+    margin-top: -5px;
+    text-align: center;
+    min-height: 1.2em;
+    width: 100%;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 15px 0; /* Boşluk ayarı */
+}
+
+#view-logs-link-popup { /* ID güncellendi */
+    font-size: 0.9rem; /* Font boyutu */
+    text-align: center;
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: flex; /* İkonu hizalamak için */
+    align-items: center;
+    justify-content: center;
+}
+
+#view-logs-link-popup:hover {
+    color: #88c0ff; /* Hover için biraz daha açık mavi */
+    text-decoration: underline;
+}

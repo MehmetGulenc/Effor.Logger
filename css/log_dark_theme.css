@@ -1,0 +1,726 @@
+:root {
+    /* Dark Theme Renk Paleti */
+    --primary-color: #58a6ff; /* Daha parlak mavi */
+    --bg-color: #0d1117; /* GitHub Koyu Ana Arkaplan */
+    --content-bg: #161b22; /* İçerik Alanı Arkaplanı */
+    --sidebar-bg: #161b22; /* Sidebar Arkaplanı */
+    --border-color: #30363d; /* Kenarlık Rengi */
+    --text-color: #c9d1d9; /* Ana Metin Rengi */
+    --text-secondary-color: #8b949e; /* İkincil Metin Rengi (örn. log yok) */
+    --hover-bg-color: #21262d; /* Hover Arkaplan Rengi */
+    --input-bg: #0d1117; /* Input Arkaplanı */
+    --input-border: #30363d;
+    --input-text-color: var(--text-color);
+    --button-danger: #f85149;
+    --button-danger-hover-bg: #da3633;
+    --button-danger-hover-text: #ffffff;
+    --button-copy: #3fb950;
+    --button-copy-hover-bg: #2ea043;
+    --button-copy-hover-text: #ffffff;
+    --log-separator-color: #21262d;
+    --log-hover-bg: #21262d;
+    --time-badge-bg: #30363d; /* Saat rozeti arkaplanı */
+    --time-badge-color: #8b949e; /* Saat rozeti metin rengi */
+    --modal-bg: rgba(13, 17, 23, 0.8); /* Overlay arkaplanı */
+    --modal-box-bg: #161b22; /* Modal kutusu arkaplanı */
+    --link-color: var(--primary-color); /* Bağlantı rengi (varsa) */
+    --error-color: var(--button-danger); /* Hata mesajı rengi */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Sayfanın kaymasını engelle */
+}
+
+/* WebKit (Chrome, Safari, Edge, Opera) için */
+::-webkit-scrollbar {
+    width: 8px; /* Dikey scrollbar genişliği */
+    height: 8px; /* Yatay scrollbar yüksekliği (varsa) */
+}
+
+/* Scrollbar'ın arka planı (track) */
+::-webkit-scrollbar-track {
+    background: var(
+            --content-bg
+    ); /* İçerik arkaplanı ile aynı veya biraz daha koyu */
+    border-radius: 4px; /* Köşe yuvarlaklığı */
+    /* border: 1px solid var(--border-color); İsteğe bağlı: Kenarlık */
+}
+
+/* Scrollbar'ın hareket eden kısmı (thumb) */
+::-webkit-scrollbar-thumb {
+    background-color: var(
+            --text-secondary-color
+    ); /* Başparmak rengi (soluk gri) */
+    border-radius: 4px; /* Köşe yuvarlaklığı */
+    border: 1px solid var(--content-bg); /* Track ile arada ince bir boşluk hissi verir */
+}
+
+/* Scrollbar thumb'ının üzerine gelince */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-color); /* Hover'da biraz daha belirgin */
+    /* border-color: var(--primary-color); İsteğe bağlı: Hover'da kenarlık rengi */
+}
+
+/* Köşe (dikey ve yatay scrollbar kesişimi - genellikle görünmez) */
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 70px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    flex-shrink: 0; /* Sidebar'ın küçülmesini engelle */
+    z-index: 10; /* Diğer içeriklerin üzerine çıkabilir */
+}
+
+.sidebar button {
+    background: none;
+    border: none;
+    color: var(--text-secondary-color); /* Pasif ikon rengi */
+    font-size: 24px; /* İkon boyutu */
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar button:hover {
+    background-color: var(--hover-bg-color);
+    color: var(--text-color); /* Hover'da daha belirgin renk */
+}
+
+.sidebar button.active {
+    background-color: rgba(88, 166, 255, 0.15); /* Aktif arka plan */
+    color: var(--primary-color); /* Aktif ikon rengi */
+}
+
+/* --- Main Content --- */
+.main-content {
+    flex-grow: 1;
+    /* padding: 20px; Kaldırıldı, view'lar kendi padding'ini yönetsin */
+    overflow: hidden; /* View'ların taşmasını engelle */
+    height: 100%;
+    display: flex; /* İçindeki view'ı esnetmek için */
+}
+
+.view {
+    display: none; /* Başlangıçta tüm görünümler gizli */
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; /* Gerekirse view içinde scroll */
+    padding: 20px; /* View'lara padding ver */
+    box-sizing: border-box;
+}
+
+.view.active {
+    display: flex; /* Aktif görünümü göster (flex ile içerik yönetimi) */
+    flex-direction: column; /* İçerik alt alta dizilsin */
+}
+
+/* --- Calendar View --- */
+#calendar-view {
+    /* Flex ayarları .active class'ından geliyor */
+    flex-direction: row; /* Aylar yan yana */
+    gap: 20px; /* Aylar arası boşluk */
+    flex-wrap: wrap; /* Küçük ekranlarda alt alta geçsin */
+    align-content: flex-start; /* Yukarıdan başlasın */
+}
+
+.month-container {
+    background-color: var(--content-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    /* padding: 15px; Kaldırıldı, başlık ve liste kendi padding'ini ayarlar */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Daha belirgin gölge */
+    flex: 1; /* Aylar eşit genişlikte olsun */
+    min-width: 350px; /* Minimum genişlik */
+    /* max-width: 500px; İsteğe bağlı: Maksimum genişlik */
+    height: calc(100% - 0px); /* View padding'i düşüldü (%100 olmalı) */
+    display: flex; /* İçerik yönetimi */
+    flex-direction: column; /* Başlık üstte, liste altta */
+    overflow: hidden; /* İç scroll'u listeye ver */
+    box-sizing: border-box;
+}
+
+.month-container h3 {
+    text-align: center;
+    margin: 0;
+    padding: 15px; /* Başlık padding'i */
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    flex-shrink: 0; /* Başlık küçülmesin */
+}
+
+.day-list {
+    list-style: none;
+    padding: 15px; /* Liste padding'i */
+    margin: 0;
+    overflow-y: auto; /* Sadece gün listesi scroll etsin */
+    flex-grow: 1; /* Kalan alanı kaplasın */
+}
+
+.day-item {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    /* padding: 10px; Kaldırıldı, header ve log listesi kendi padding'ini alır */
+    background-color: var(
+            --bg-color
+    ); /* Gün arkaplanı ana arkaplanla aynı */
+    cursor: pointer; /* Günlere tıklanabilirlik hissi */
+    transition: border-color 0.2s ease;
+    overflow: hidden; /* İçerik taşmasın */
+}
+
+.day-item.disabled-day {
+    background-color: var(
+            --hover-bg-color
+    ); /* Normalden biraz farklı bir arka plan */
+    opacity: 0.7; /* Biraz soluklaştır */
+    cursor: not-allowed; /* Tıklanamaz imleci */
+    border-color: var(--border-color); /* Vurgulu kenarlığı kaldır */
+}
+
+/* Tatil günlerinin üzerine gelince vurguyu kaldır */
+.day-item.disabled-day:hover {
+    border-color: var(--border-color); /* Kenarlık değişmesin */
+    background-color: var(--hover-bg-color); /* Arka plan değişmesin */
+}
+
+/* Tatil günü başlığı */
+.day-item.disabled-day .day-header {
+    /* Belki başlık rengini biraz soluklaştırabiliriz */
+    color: var(--text-secondary-color);
+    /* background-color: var(--content-bg); Varsayılanı koruyabilir */
+}
+
+/* Tatil adı için stil */
+.holiday-name {
+    font-style: italic;
+    font-size: 0.85em;
+    color: var(--text-secondary-color);
+    margin-left: 5px;
+}
+
+/* Tatil günündeki log listesi ve item'ları */
+.day-item.disabled-day .log-list {
+    /* Belki log listesini de biraz soluklaştırır */
+    /* opacity: 0.8; */
+}
+
+.log-item.disabled-log {
+    cursor: default; /* Tıklanabilir olmadığını belirt */
+}
+.log-item.disabled-log:hover {
+    background-color: inherit; /* Hover efektini kaldır */
+}
+
+/* Tatil gününde log olmadığında gösterilecek özel mesaj */
+.no-logs.holiday-info {
+    color: var(--text-secondary-color);
+    font-weight: 500;
+}
+
+.no-logs:not(.holiday-info):hover {
+    /* Tatil bilgisi değilse hover efekti ver */
+    background-color: var(--hover-bg-color);
+    color: var(--text-color);
+}
+
+.day-item.disabled-day .no-logs {
+    cursor: not-allowed; /* Tatilde tıklanamaz */
+}
+
+.day-item.disabled-day .no-logs:hover {
+    background-color: inherit; /* Tatilde hover efekti olmasın */
+}
+
+.day-item:not(.disabled-day):hover { /* Sadece tıklanabilir günlerde hover */
+    border-color: var(
+            --primary-color
+    ); /* Hover'da kenarlık rengi değişsin */
+}
+
+/* YENİ: Bugünkü günü vurgula */
+.day-item.today {
+    border-color: var(--primary-color); /* Daha belirgin bir kenarlık */
+    background-color: rgba(88, 166, 255, 0.1); /* Hafif mavi arka plan */
+    /* İsteğe bağlı: Daha kalın kenarlık veya farklı bir arka plan */
+    /* border-width: 2px; */
+}
+/* Bugünün başlığını da biraz farklılaştırabiliriz (isteğe bağlı) */
+.day-item.today .day-header {
+    background-color: rgba(
+            88,
+            166,
+            255,
+            0.15
+    ); /* Başlık arka planı da hafif mavi */
+}
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px; /* Header padding */
+    background-color: var(--content-bg); /* Header arkaplanı farklı */
+    border-bottom: 1px solid var(--border-color);
+}
+.day-header .date-info {
+    flex-grow: 1;
+    font-weight: 500;
+    font-size: 0.95em;
+    color: var(--text-color);
+}
+.day-total-time {
+    font-size: 0.8em;
+    color: var(--time-badge-color);
+    background-color: var(--time-badge-bg);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    flex-shrink: 0; /* Küçülmesin */
+    white-space: nowrap; /* Tek satırda kalsın */
+    margin-left: 8px; /* Soldaki elemandan ayır */
+}
+.day-header .date-info .day-name {
+    color: var(--text-secondary-color);
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+.day-buttons {
+    display: flex; /* Butonları yan yana getir */
+    align-items: center; /* Dikey hizala */
+}
+
+.day-buttons button {
+    background: none;
+    border: none; /* Kenarlıksız ikon butonlar */
+    color: var(--text-secondary-color);
+    border-radius: 4px;
+    padding: 5px; /* Daha iyi tıklama alanı */
+    margin-left: 6px;
+    cursor: pointer;
+    font-size: 14px; /* İkon boyutu */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: 1; /* İkonu ortala */
+    width: 26px; /* Sabit genişlik/yükseklik */
+    height: 26px;
+    display: inline-flex; /* İkonu ortalamak için */
+    align-items: center;
+    justify-content: center;
+}
+.day-buttons button:hover {
+    background-color: var(--hover-bg-color);
+}
+
+.day-buttons button.clear-day-logs:hover {
+    color: var(--button-danger);
+}
+.day-buttons button.copy-day-logs:hover {
+    color: var(--button-copy);
+}
+.day-buttons button.copy-day-logs.copied {
+    color: var(--button-copy); /* Başarı rengi */
+    background-color: rgba(63, 185, 80, 0.15); /* Hafif yeşil arka plan */
+}
+.day-buttons button.copy-day-logs.copied:hover {
+    background-color: rgba(63, 185, 80, 0.25);
+}
+.day-buttons button.add-log-placeholder:hover {
+    color: var(--primary-color); /* Hover'da mavi yap */
+    opacity: 0.8 !important;
+}
+
+
+.log-list {
+    list-style: none;
+    padding: 0; /* Kenarlardan boşluk olmasın, log-item'a verilecek */
+    margin: 0;
+    font-size: 14px;
+    /* Arkaplan rengi day-item'dan gelecek */
+}
+
+/* Geliştirilmiş Log Item Stili */
+.log-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px; /* Log içi boşluk */
+    border-bottom: 1px solid var(--log-separator-color);
+    cursor: grab; /* Sürükleme imleci */
+    transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transitions */
+}
+.log-item:not(.disabled-log):hover { /* Sadece tıklanabilir loglarda hover */
+    background-color: var(--log-hover-bg);
+}
+.log-item:last-child {
+    border-bottom: none;
+}
+.log-text {
+    flex-grow: 1;
+    margin-right: 15px; /* Metin ve saat arası boşluk */
+    color: var(--text-color);
+    font-size: 0.9em;
+    line-height: 1.4;
+    word-break: break-word; /* Uzun kelimeler kırılsın */
+}
+.log-time {
+    font-weight: 500;
+    background-color: var(--time-badge-bg); /* Rozet arkaplanı */
+    color: var(--time-badge-color); /* Rozet metni */
+    padding: 3px 8px;
+    border-radius: 10px; /* Yuvarlak rozet */
+    font-size: 0.8em;
+    flex-shrink: 0; /* Saat bilgisi küçülmesin */
+    white-space: nowrap; /* Saat alta kaymasın */
+}
+.log-time::after { /* ' h' ekini CSS ile ekle */
+    content: ' h';
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* Log eklenmemiş günler için stil */
+.no-logs {
+    font-style: italic;
+    color: var(--text-secondary-color);
+    font-size: 0.85em;
+    text-align: center;
+    padding: 15px; /* Boşluk */
+    cursor: pointer; /* Tıklanabilir olduğunu göster */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.no-logs:not(.holiday-info):hover { /* Tatil değilse hover */
+     background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* --- Drag & Drop Styles --- */
+.log-item.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+}
+
+/* Bırakma hedefi olan günün vurgusu (günler arası taşıma için) */
+.day-item.drag-over .log-list {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline: 1px dashed #aaa;
+    outline-offset: -2px;
+    min-height: 30px;
+}
+
+/* YENİ: Aynı gün içinde sıralama için görsel işaretçi */
+.log-list .drop-indicator {
+    height: 2px;
+    background-color: var(--accent-color, #4a90e2); /* Tema rengi veya belirgin bir renk */
+    margin: 2px 0; /* Üst ve alt loglardan biraz ayır */
+    list-style-type: none; /* Liste işaretini kaldır */
+    pointer-events: none; /* İşaretçinin kendisi olayları engellemesin */
+}
+
+
+/* Sürükleme sırasında sayfa içeriğinin seçilmesini engelle */
+body.dragging-log * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* --- Log Entry View --- */
+#log-entry-view {
+    /* active class'ı display:flex yapar */
+    /* width/height %100, padding 20px .view'dan geliyor */
+    cursor: pointer; /* cell yerine pointer daha uygun */
+    background-color: var(--content-bg); /* Farklı arkaplan */
+    border: 2px dashed var(--border-color); /* Daha uyumlu kenarlık */
+    border-radius: 8px;
+    /* display: flex; .view.active zaten yapıyor */
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: var(--text-secondary-color); /* Daha soluk yazı */
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+#log-entry-view:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+#log-entry-view span {
+    pointer-events: none;
+}
+
+/* --- Log Input Overlay --- */
+#log-input-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg);
+    /* display: flex; JS ile eklenecek */
+    align-items: center; /* Dikey ortala */
+    justify-content: center; /* Yatay ortala */
+    z-index: 1000;
+    display: none; /* Başlangıçta gizli */
+    padding: 20px; /* Kenarlardan boşluk bırak ki küçük ekranda taşmasın */
+    box-sizing: border-box;
+}
+#log-input-overlay.show { /* Göstermek için kullanılacak class */
+    display: flex;
+}
+
+
+/* Mevcut .log-input-box stilini bul ve güncelle */
+.log-input-box {
+    background-color: var(--modal-box-bg);
+    padding: 30px 35px; /* İç boşluk (index.html'dekine yakın) */
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    display: flex; /* İçerik düzeni için */
+    flex-direction: column; /* İçerik alt alta */
+    gap: 20px; /* İç elemanlar arası boşluk */
+    /* --- BOYUTLANDIRMA --- */
+    width: 90%; /* Genişlik %90 */
+    max-width: 600px; /* MAKSİMUM genişlik (index.html'den biraz daraltıldı) */
+    /* --- /BOYUTLANDIRMA --- */
+    margin: auto; /* Flexbox ile zaten ortalanır ama ekstra güvence */
+    box-sizing: border-box; /* Padding dahil hesapla */
+    /* position: absolute; ve transform kaldırıldı, flexbox ortalar */
+}
+
+/* Sil butonu için danger class'ı (index.html'deki gibi) */
+.log-input-box button.danger {
+    background-color: transparent; /* Şeffaf arka plan */
+    color: var(--button-danger); /* Kırmızı metin */
+    border: 1px solid var(--button-danger); /* Kırmızı kenarlık */
+}
+.log-input-box button.danger:hover {
+    background-color: var(
+            --button-danger-hover-bg
+    ); /* Koyu kırmızı arka plan */
+    color: var(--button-danger-hover-text); /* Beyaz metin */
+    border-color: var(--button-danger-hover-bg); /* Koyu kırmızı kenarlık */
+}
+
+/* --- Zaman Seçenekleri Stilleri (index.html'den) --- */
+.time-options-label {
+    font-size: 0.9em;
+    color: var(--text-secondary-color);
+    margin-bottom: -5px; /* Seçeneklere biraz daha yakın */
+    font-weight: 500;
+}
+
+.time-options-container {
+    display: flex;
+    flex-wrap: wrap; /* Gerektiğinde alt satıra geç */
+    gap: 10px; /* Seçenekler arası boşluk */
+    padding-top: 10px; /* Üstten boşluk */
+    /* border-top: 1px solid var(--border-color); Ayırıcı çizgi kaldırıldı */
+}
+
+.time-option {
+    /* Konteyner görevi görür, flex item'ı olur */
+}
+
+.time-option input[type="radio"] {
+    /* Gerçek radio butonu gizle */
+    opacity: 0;
+    position: fixed;
+    width: 0;
+}
+
+.time-option label {
+    display: inline-block;
+    padding: 6px 14px; /* İç boşluk */
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Tamamen yuvarlak kenarlar (pill shape) */
+    cursor: pointer;
+    font-size: 0.85em;
+    color: var(--text-secondary-color);
+    transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+    user-select: none; /* Metin seçilmesini engelle */
+}
+
+/* Seçili radio'nun label'ı */
+.time-option input[type="radio"]:checked + label {
+    background-color: var(--primary-color);
+    color: var(--modal-box-bg); /* Yüksek kontrast */
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Fareyle üzerine gelince */
+.time-option label:hover {
+    border-color: var(--text-color);
+    color: var(--text-color);
+}
+/* Seçili olana hover */
+.time-option input[type="radio"]:checked + label:hover {
+    /* Stil aynı kalsın veya hafif değişsin */
+    background-color: #4a9dec; /* Biraz daha açık mavi */
+    border-color: #4a9dec;
+}
+
+/* Erişilebilirlik için focus stili (focus-visible kullanmak daha iyi) */
+.time-option input[type="radio"]:focus-visible + label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+/* --- Zaman Seçenekleri Stilleri Sonu --- */
+
+.log-input-box h4 {
+    margin-top: 0;
+    margin-bottom: 10px; /* Başlık altı boşluk */
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.log-input-box input[type="text"] {
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.log-input-box input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+/* index.html'deki gibi input genişlikleri */
+.log-input-box input#log-text-input {
+    flex-grow: 3;
+}
+.log-input-box input#log-time-input {
+    flex-grow: 1;
+    min-width: 80px; /* Saat alanı için minimum genişlik */
+    max-width: 100px; /* Sabit genişlik kaldırıldı, esnek ama limitli */
+    text-align: center; /* Saat ortalansın */
+}
+
+.log-input-box .button-group {
+    display: flex;
+    justify-content: flex-end; /* Butonları sağa yasla */
+    gap: 10px;
+    margin-top: 15px; /* Biraz daha boşluk */
+    padding-top: 15px; /* Üstüne çizgi için */
+    border-top: 1px solid var(--border-color); /* Ayırıcı çizgi */
+}
+
+/* Sil butonu sola yaslı */
+#delete-log-button {
+    margin-right: auto;
+}
+
+.log-input-box button {
+    padding: 9px 18px; /* Biraz daha küçük butonlar */
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex; /* İkonları hizalamak için */
+    align-items: center;
+    gap: 6px; /* İkon ve metin arası boşluk */
+}
+
+.log-input-box button#save-log-button {
+    background-color: var(--button-copy); /* Yeşil kaydet butonu */
+    color: #ffffff;
+    border-color: var(--button-copy);
+}
+.log-input-box button#save-log-button:hover {
+    background-color: var(--button-copy-hover-bg);
+    border-color: var(--button-copy-hover-bg);
+}
+
+.log-input-box button#cancel-log-button {
+    background-color: transparent; /* Şeffaf iptal */
+    color: var(--text-secondary-color);
+    border-color: var(--border-color);
+}
+.log-input-box button#cancel-log-button:hover {
+    background-color: var(--hover-bg-color);
+    border-color: var(--text-secondary-color);
+    color: var(--text-color);
+}
+/* Sil butonu için danger class'ı yukarıda tanımlandı */
+
+/* Hata mesajı stili */
+.log-input-box .error {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: -10px; /* Butonlara daha yakın */
+    margin-bottom: -5px;
+    text-align: center;
+    min-height: 1.2em;
+    width: 100%;
+}
+
+/* --- Küçük Bildirim Kutusu --- */
+#toast-notification {
+    position: fixed;
+    bottom: -100px; /* Başlangıçta ekran dışında */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--content-bg); /* #21262d yerine */
+    color: var(--text-color);
+    padding: 12px 25px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    z-index: 1001;
+    opacity: 0;
+    transition: opacity 0.4s ease, bottom 0.4s ease; /* bottom animasyonu eklendi */
+    pointer-events: none;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+#toast-notification.show {
+    opacity: 1;
+    bottom: 20px; /* Görünür konuma gelsin */
+}

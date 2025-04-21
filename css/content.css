@@ -1,0 +1,38 @@
+#effort-logger-fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px; /* Biraz daha büyük */
+    height: 60px;
+    background-color: #58a6ff; /* Tema ana rengi */
+    color: #0d1117; /* Koyu ikon rengi */
+    border: none;
+    border-radius: 50%; /* Tam yuvarlak */
+    font-size: 26px; /* İkon boyutu */
+    /* line-height ve text-align yerine flexbox kullanalım */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15); /* Daha belirgin gölge */
+    z-index: 9999;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    outline: none;
+}
+
+#effort-logger-fab:hover {
+    background-color: #4a9dec; /* Hover rengi */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px) scale(1.05); /* Hafif yukarı kalkma ve büyüme efekti */
+}
+
+#effort-logger-fab:active {
+    transform: translateY(0) scale(1); /* Tıklama efekti */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* İkonun tam ortalanması için ek stil (gerekirse) */
+#effort-logger-fab i {
+    line-height: 1; /* İkonun kendi satır yüksekliğini sıfırla */
+    display: block; /* Dikey hizalamaya yardımcı olur */
+}

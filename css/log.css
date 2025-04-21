@@ -1,0 +1,428 @@
+/* --- Değişkenler --- */
+:root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --secondary-color: #6c757d;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #495057;
+    --border-color: #dee2e6;
+    --text-color: #212529;
+    --white: #ffffff;
+    --red: #dc3545;
+    --red-hover: #c82333;
+    --green: #28a745;
+    --green-hover: #218838;
+    --pink: #fff0f5; /* Pazar */
+    --light-saturday: #fdfdfd; /* Cumartesi */
+    --holiday-bg: #f0f8ff; /* Açık mavi - Tatil */
+
+    --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --border-radius: 0.3rem; /* Daha yumuşak köşeler */
+    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* --- Genel Stiller --- */
+body {
+    font-family: var(--font-family);
+    margin: 0; /* Kenar boşluklarını sıfırla */
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container { /* Sayfa içeriğini sarmalamak için */
+    max-width: 1200px;
+    margin: 2rem auto; /* Ortala ve boşluk bırak */
+    padding: 0 1rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+button {
+    font-family: inherit; /* Ana fontu kullan */
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid transparent;
+    padding: 0.5rem 1rem; /* Daha iyi buton boyutu */
+    font-size: 0.9rem;
+    background-color: var(--secondary-color);
+    color: var(--white);
+}
+
+button:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5); /* Odaklanma efekti */
+}
+
+button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+
+/* --- Navigasyon --- */
+.navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem; /* Butonlar arası boşluk */
+}
+
+.navigation button {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+.navigation button:hover {
+    background-color: var(--light-gray);
+}
+
+#current-month-year {
+    font-weight: 500; /* Biraz daha kalın */
+    font-size: 1.2rem;
+    min-width: 180px; /* Genişlik */
+    text-align: center;
+    color: var(--dark-gray);
+}
+
+/* --- Log Tablosu --- */
+#log-table-container {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1rem; /* İç boşluk */
+    overflow-x: auto; /* Küçük ekranlarda taşmayı önle */
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse; /* Kenarlıkları birleştir */
+    table-layout: fixed;
+    border: 1px solid var(--border-color); /* Dış kenarlık */
+}
+
+.log-table th,
+.log-table td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem; /* Hücre içi boşluk */
+    text-align: left;
+    vertical-align: top;
+    height: 130px; /* Hücre yüksekliği biraz artırıldı */
+    position: relative;
+}
+
+.log-table th {
+    background-color: var(--light-gray);
+    text-align: center;
+    font-weight: 500; /* Kalınlık */
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    padding: 0.5rem; /* Başlık padding'i */
+}
+
+/* --- Gün Hücresi Stilleri --- */
+.day-cell {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+/* Hover efekti sadece diğer ay hücreleri dışındakilere */
+.day-cell:not(.other-month):hover {
+    background-color: #f1f1f1;
+}
+
+.day-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Wrapper tüm hücreyi doldursun */
+}
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem; /* Alt boşluk */
+    font-size: 0.8rem;
+}
+
+.day-number {
+    font-weight: bold;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.total-duration {
+    font-size: 0.8rem;
+    background-color: var(--medium-gray);
+    color: var(--dark-gray);
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.2rem;
+    font-weight: 500;
+}
+.total-duration:empty { /* Boşsa gizle */
+    display: none;
+}
+
+/* Tatil Adı Stili */
+.holiday-name {
+    font-size: 0.7rem; /* Küçük font */
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem; /* Kayıtlarla arasına boşluk */
+    font-style: italic;
+    line-height: 1.2; /* Satır yüksekliği */
+    max-height: 2.4em; /* En fazla 2 satır */
+    overflow: hidden;
+}
+
+
+/* Kopyala Butonu */
+.copy-button {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    background-color: rgba(0, 123, 255, 0.8); /* Yarı saydam mavi */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Yuvarlak */
+    width: 28px; /* Sabit genişlik/yükseklik */
+    height: 28px;
+    font-size: 0.9rem; /* İkon boyutu */
+    padding: 0; /* Padding sıfır */
+    line-height: 28px; /* İkonu ortala */
+    text-align: center;
+    opacity: 0; /* Normalde gizli */
+    transform: scale(0.8); /* Başlangıçta küçük */
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+.day-cell:hover .copy-button {
+    opacity: 1; /* Hover'da görünür */
+    transform: scale(1); /* Normal boyut */
+}
+.copy-button:hover {
+    background-color: var(--primary-hover);
+}
+.copy-button.copied {
+    background-color: var(--green); /* Yeşil */
+    transform: scale(1.1); /* Kopyalandı efekti */
+}
+.copy-button.copied:hover {
+    background-color: var(--green-hover);
+}
+
+/* Kayıt Girdisi Stilleri */
+.entries-container {
+    flex-grow: 1; /* Kalan alanı doldur */
+    overflow-y: auto; /* Çok fazla kayıt varsa scroll */
+    margin-top: auto; /* Mümkünse alta yasla */
+    font-size: 0.75rem; /* Kayıt font boyutu */
+    padding-right: 5px; /* Scroll bar için boşluk */
+}
+
+.log-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Dikey ortala */
+    margin-bottom: 0.3rem; /* Kayıtlar arası boşluk */
+    padding: 0.25rem 0.4rem;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    background-color: #f8f9fa99; /* Hafif arka plan */
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.log-entry:hover {
+    background-color: var(--medium-gray);
+    border-color: #ced4da;
+}
+
+.log-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 0.5rem; /* Süre ile arasına boşluk */
+    color: var(--text-color);
+}
+
+.log-duration {
+    font-weight: 500; /* Süre biraz kalın */
+    white-space: nowrap;
+    color: var(--primary-color); /* Süre mavi olsun */
+    font-size: 0.8rem;
+}
+.log-duration::after {
+    content: 's'; /* 's' ekini CSS ile ekle */
+    font-size: 0.7rem;
+    color: var(--secondary-color);
+    margin-left: 1px;
+}
+
+
+/* Renklendirmeler */
+.weekend { /* Pazar */
+    background-color: var(--pink);
+}
+.saturday { /* Cumartesi */
+    background-color: var(--light-saturday); /* Çok çok hafif gri */
+}
+.holiday { /* Tatil */
+    background-color: var(--holiday-bg);
+}
+.holiday .day-number {
+    color: var(--primary-color); /* Tatil gün numarası mavi */
+}
+/* Hem hafta sonu hem tatil ise (örn. Pazar'a denk gelen bayram) */
+.weekend.holiday {
+    background-image: linear-gradient(45deg, var(--pink) 50%, var(--holiday-bg) 50%);
+}
+.saturday.holiday {
+    background-image: linear-gradient(45deg, var(--light-saturday) 50%, var(--holiday-bg) 50%);
+}
+
+.other-month {
+    background-color: #fdfdfd; /* Diğer ay hücreleri */
+    cursor: default;
+}
+.other-month .day-wrapper,
+.other-month .copy-button {
+    opacity: 0.4; /* Soluk göster */
+    pointer-events: none; /* Tıklanamaz yap */
+}
+
+
+/* --- Modal Stilleri --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050; /* Bootstrap modal z-index'i */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Scroll modal içinde */
+    outline: 0;
+    background-color: rgba(33, 37, 41, 0.5); /* Koyu yarı saydam arka plan */
+}
+
+.modal-content {
+    background-color: var(--white);
+    position: relative;
+    margin: 10vh auto; /* Dikey ortala, üstten boşluk */
+    padding: 1.5rem;
+    border: none; /* Kenarlık yok */
+    width: 90%;
+    max-width: 500px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto; /* Modal içeriği tıklanabilir */
+    background-clip: padding-box;
+    outline: 0;
+}
+
+.close-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    background: transparent;
+    border: 0;
+    padding: 0; /* Padding sıfırla */
+    cursor: pointer;
+}
+.close-button:hover {
+    opacity: .75;
+    color: #000;
+    text-decoration: none;
+}
+
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+    color: var(--dark-gray);
+}
+
+.modal .form-group {
+    margin-bottom: 1rem;
+}
+.modal label {
+    display: block;
+    margin-bottom: 0.5rem; /* Label alt boşluğu */
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+.modal input[type="text"],
+.modal select {
+    width: 100%;
+    padding: 0.6rem 0.75rem; /* Daha iyi padding */
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.modal input[type="text"]:focus,
+.modal select:focus {
+    border-color: #86b7fe; /* Mavi odak rengi */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between; /* Butonları ayır */
+    margin-top: 1.5rem;
+    padding-top: 1rem; /* Üstüne çizgi efekti için boşluk */
+    border-top: 1px solid var(--border-color); /* Ayırıcı çizgi */
+}
+
+.modal-actions button#save-edit-button {
+    background-color: var(--green); /* Kaydet butonu yeşil */
+    border-color: var(--green);
+}
+.modal-actions button#save-edit-button:hover {
+    background-color: var(--green-hover);
+    border-color: var(--green-hover);
+}
+
+.modal-actions button#delete-entry-button {
+    background-color: var(--red); /* Sil butonu kırmızı */
+    border-color: var(--red);
+}
+.modal-actions button#delete-entry-button:hover {
+    background-color: var(--red-hover);
+    border-color: var(--red-hover);
+}
+
+
+.modal .error {
+    color: var(--red);
+    font-size: 0.8rem;
+    margin-top: 0.5rem; /* Hata mesajı boşluğu */
+    text-align: center;
+    min-height: 1.2em; /* Yükseklik */
+    width: 100%; /* Tam genişlik */
+}

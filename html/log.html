@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Efor Kayıt Takvimi (Karanlık Tema)</title>
+    <!-- Font Awesome CDN yerine yerel kullanmak daha güvenilir olabilir -->
+    <!-- Yerel kullanmak için font dosyalarını ve css'i projenize ekleyin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="../css/log_dark_theme.css" />
+    <script src="../js/jquery-3.7.1.min.js"></script> <!-- jQuery önce yüklenmeli -->
+</head>
+<body>
+<div class="app-container">
+    <div class="sidebar">
+        <button id="btn-calendar" class="active" title="Takvim">
+            <i class="fa-regular fa-calendar-days"></i>
+        </button>
+        <button id="btn-log-entry" title="Bugüne Log Girişi">
+            <i class="fa-solid fa-pencil"></i>
+        </button>
+    </div>
+
+    <div class="main-content">
+        <!-- View'lar artık .active class'ı ile gösterilecek/gizlenecek -->
+        <div id="calendar-view" class="view active">
+            <!-- Takvim içeriği buraya JS ile eklenecek -->
+        </div>
+        <div id="log-entry-view" class="view">
+            <span>Log eklemek için buraya tıklayın (Bugünün tarihi için)</span>
+        </div>
+    </div>
+</div>
+
+<!-- Log Giriş Overlay/Modal -->
+<div id="log-input-overlay">
+    <div class="log-input-box">
+        <h4 id="log-modal-title">Log Ekle</h4>
+        <div class="input-row">
+            <input
+                    type="text"
+                    id="log-text-input"
+                    placeholder="Yapılan iş açıklaması..."
+            />
+            <!-- index.html'deki gibi ayrı text ve time inputları -->
+            <input
+                    type="text"
+                    id="log-time-input"
+                    placeholder="Saat (örn: 0.5)"
+            />
+        </div>
+        <!-- Zaman Seçenekleri index.html'deki gibi -->
+        <div class="time-options-section">
+            <div class="time-options-label">Veya seçin (Çift tık = Kaydet):</div>
+            <div class="time-options-container">
+                <!-- Radio butonlar JS ile buraya eklenecek -->
+            </div>
+        </div>
+        <input type="hidden" id="log-target-date" />
+        <input type="hidden" id="editing-log-index" value="-1" />
+        <div class="button-group">
+            <!-- Sil butonu index.html'deki gibi -->
+            <button id="delete-log-button" class="danger" style="display: none">
+                <i class="fa-regular fa-trash-can"></i> Sil
+            </button>
+            <button id="cancel-log-button"><i class="fa-solid fa-xmark"></i> İptal</button>
+            <button id="save-log-button"><i class="fa-regular fa-floppy-disk"></i> Kaydet</button>
+        </div>
+        <p id="edit-error-message" class="error"></p> <!-- Hata mesajı alanı -->
+    </div>
+</div>
+
+<!-- Bildirim Kutusu -->
+<div id="toast-notification"></div>
+
+<!-- JS dosyası sonda -->
+<script src="../js/log.js"></script>
+</body>
+</html>

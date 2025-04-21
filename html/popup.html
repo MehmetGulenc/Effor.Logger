@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Efor Ekle</title>
+    <link rel="stylesheet" href="../css/popup_dark_theme.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+<div class="container">
+    <h2><i class="fa-regular fa-calendar-plus" style="margin-right: 8px; color: var(--primary-color)"></i> Yeni Efor Kaydı</h2>
+
+    <div class="form-group">
+        <!-- <label for="log-text-input-popup">Açıklama:</label> -->
+        <input type="text" id="log-text-input-popup" placeholder="Yapılan iş açıklaması..." required>
+    </div>
+
+    <div class="time-options-section">
+        <div class="time-options-label">Süre (saat):</div>
+        <div class="time-options-container">
+            <!-- Radio butonlar JS ile buraya eklenecek -->
+        </div>
+    </div>
+    <!-- Gizli input yerine doğrudan seçilen radio'nun değeri okunacak -->
+    <!-- <input type="hidden" id="selected-duration-popup"> -->
+
+    <p class="error" id="error-message-popup"></p>
+
+    <button id="save-button-popup">
+        <i class="fa-regular fa-floppy-disk"></i> Kaydet
+    </button>
+
+    <hr>
+
+    <a href="#" id="view-logs-link-popup">
+        <i class="fa-solid fa-list-check" style="margin-right: 5px;"></i> Tüm Kayıtları Görüntüle
+    </a>
+</div>
+<script src="../js/popup.js"></script>
+</body>
+</html>
