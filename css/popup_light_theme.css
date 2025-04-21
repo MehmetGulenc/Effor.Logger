@@ -1,0 +1,167 @@
+/* --- START OF FILE EfforLogger/css/popup_light_theme.css --- */
+/* --- Değişkenler (log_light_theme.css'den) --- */
+:root {
+    --primary-color: #0969da;
+    --bg-color: #f6f8fa;
+    --content-bg: #ffffff; /* Popup için kutu arkaplanı */
+    --border-color: #d0d7de;
+    --text-color: #24292f;
+    --text-secondary-color: #57606a;
+    --hover-bg-color: #f0f2f5;
+    --input-bg: #ffffff;
+    --input-border: #d0d7de;
+    --input-text-color: var(--text-color);
+    --button-danger: #cf222e;
+    --button-copy: #1f883d; /* Kaydet butonu için yeşil */
+    --button-copy-hover-bg: #1a7f37;
+    --button-copy-hover-text: #ffffff;
+    --error-color: var(--button-danger);
+    --link-color: var(--primary-color);
+
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --border-radius: 6px;
+}
+
+/* --- Genel Popup Stilleri --- */
+body {
+    font-family: var(--font-family);
+    width: 380px;
+    margin: 0;
+    padding: 0;
+    background-color: var(--content-bg);
+    color: var(--text-color);
+    line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    padding: 20px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: center;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+h2 i { color: var(--primary-color); } /* Ensure icon uses primary color */
+
+/* --- Form Elemanları --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input[type="text"]#log-text-input-popup {
+    padding: 11px 14px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]#log-text-input-popup::placeholder {
+    color: var(--text-secondary-color);
+    opacity: 0.9; /* Slightly more visible placeholder in light theme */
+}
+
+input[type="text"]#log-text-input-popup:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3); /* Lighter focus ring */
+}
+
+
+/* --- Zaman Seçenekleri --- */
+.time-options-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.time-options-label {
+    font-size: 0.85em;
+    color: var(--text-secondary-color);
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.time-options-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.time-option input[type="radio"] {
+    opacity: 0; position: fixed; width: 0;
+}
+
+.time-option label {
+    display: inline-block; padding: 5px 12px;
+    background-color: var(--bg-color); /* Light gray background */
+    border: 1px solid var(--border-color);
+    border-radius: 16px; cursor: pointer; font-size: 0.8em;
+    color: var(--text-secondary-color);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; user-select: none;
+}
+.time-option input[type="radio"]:checked + label {
+    background-color: var(--primary-color); color: var(--button-copy-hover-text); /* White text */
+    border-color: var(--primary-color); font-weight: 500;
+}
+.time-option label:hover {
+    border-color: var(--text-secondary-color);
+    color: var(--text-color);
+    background-color: var(--hover-bg-color);
+}
+.time-option input[type="radio"]:checked + label:hover {
+    background-color: #055cc6; /* Darker blue hover */
+    border-color: #055cc6;
+}
+.time-option input[type="radio"]:focus-visible + label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* --- Butonlar ve Diğerleri --- */
+button#save-button-popup {
+    padding: 10px 20px;
+    background-color: var(--button-copy); color: var(--button-copy-hover-text);
+    border: 1px solid var(--button-copy); border-radius: var(--border-radius); cursor: pointer;
+    font-size: 1rem; font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    width: 100%; margin-top: 10px; display: inline-flex;
+    align-items: center; justify-content: center; gap: 8px;
+}
+
+button#save-button-popup:hover { background-color: var(--button-copy-hover-bg); border-color: var(--button-copy-hover-bg); }
+button#save-button-popup:active { transform: scale(0.98); }
+
+.error {
+    color: var(--error-color); font-size: 0.85rem;
+    margin-top: -5px; text-align: center; min-height: 1.2em; width: 100%;
+}
+
+hr { border: 0; border-top: 1px solid var(--border-color); margin: 15px 0; }
+
+#view-logs-link-popup {
+    font-size: 0.9rem; text-align: center; color: var(--link-color);
+    text-decoration: none; transition: color 0.2s ease; display: flex;
+    align-items: center; justify-content: center; gap: 5px;
+}
+
+#view-logs-link-popup:hover { color: #055cc6; /* Darker blue hover */ text-decoration: underline; }

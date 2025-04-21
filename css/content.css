@@ -1,38 +1,59 @@
+/* --- START OF FILE EfforLogger/css/content.css --- */
 #effort-logger-fab {
     position: fixed;
     bottom: 25px;
     right: 25px;
-    width: 60px; /* Biraz daha büyük */
-    height: 60px;
-    background-color: #58a6ff; /* Tema ana rengi */
-    color: #0d1117; /* Koyu ikon rengi */
+    width: 56px; /* Standard FAB size */
+    height: 56px;
+    background-color: #0969da; /* Consistent primary blue (light theme) */
+    color: #ffffff; /* White icon */
     border: none;
     border-radius: 50%; /* Tam yuvarlak */
-    font-size: 26px; /* İkon boyutu */
-    /* line-height ve text-align yerine flexbox kullanalım */
+    font-size: 24px; /* İkon boyutu */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15); /* Daha belirgin gölge */
-    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 2147483646; /* High z-index, but below max */
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     outline: none;
+    /* Consider theme adaptation */
+    /* Maybe use CSS variables set by a small content script or fixed theme */
 }
 
+/* Basic Theme Adaptation Example (could be improved with JS) */
+@media (prefers-color-scheme: dark) {
+    #effort-logger-fab {
+        background-color: #58a6ff; /* Dark theme blue */
+        color: #0d1117; /* Dark icon text */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+     #effort-logger-fab:hover {
+        background-color: #4a9dec; /* Darker blue hover */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.25);
+    }
+}
+
+
 #effort-logger-fab:hover {
-    background-color: #4a9dec; /* Hover rengi */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.2);
-    transform: translateY(-3px) scale(1.05); /* Hafif yukarı kalkma ve büyüme efekti */
+    background-color: #055cc6; /* Darker blue hover (light theme) */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) scale(1.03); /* Subtle lift and scale */
 }
 
 #effort-logger-fab:active {
     transform: translateY(0) scale(1); /* Tıklama efekti */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* İkonun tam ortalanması için ek stil (gerekirse) */
 #effort-logger-fab i {
-    line-height: 1; /* İkonun kendi satır yüksekliğini sıfırla */
-    display: block; /* Dikey hizalamaya yardımcı olur */
+    line-height: 1; /* Reset line height */
+    display: block;
+    transition: transform 0.3s ease; /* Add transition for potential icon animation */
+}
+
+/* Example: Rotate icon on hover */
+#effort-logger-fab:hover i {
+   /* transform: rotate(15deg); */
 }

@@ -1,178 +1,303 @@
+// --- START OF FILE EfforLogger/js/popup.js ---
+/**
+ * EfforLogger/js/popup.js
+ *
+ * Handles interactions within the extension's popup (popup.html).
+ * - Saves a quick log entry for today.
+ * - Provides link to the main log page.
+ * - Implements autosuggest and quick time selection.
+ * - Handles theme loading.
+ * - Basic natural language parsing for input.
+ */
+
+// --- DOM Elements ---
+const logTextInput = document.getElementById('log-text-input-popup');
+const timeOptionsContainer = document.querySelector('.time-options-container');
+const saveButton = document.getElementById('save-button-popup');
+const errorMessage = document.getElementById('error-message-popup');
+const viewLogsLink = document.getElementById('view-logs-link-popup');
+const datalistElement = document.getElementById('recent-logs-datalist');
+const bodyElement = document.body; // For theme application
+
+// --- Constants ---
+const defaultTimeOptions = [0.25, 0.5, 1, 1.5, 2, 3, 4, 8]; // Default quick time options
+const TIME_REGEX = /(\d+(\.\d{1,2})?)\s*s?a?a?t?$/i; // Matches "0.5", "1 sa", "2 saat" at the end
+const MIN_LOG_TEXT_LENGTH = 3; // Minimum characters before parsing time
+
+// --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Element Referansları (ID'ler güncellendi)
-    const logTextInputPopup = document.getElementById('log-text-input-popup');
-    const timeOptionsContainerPopup = document.querySelector('.time-options-container');
-    const saveButtonPopup = document.getElementById('save-button-popup');
-    const errorMessagePopup = document.getElementById('error-message-popup');
-    const viewLogsLinkPopup = document.getElementById('view-logs-link-popup');
+    loadThemePreference(); // Load theme first
+    populateTimeOptions();
+    loadRecentLogs(); // Populate autosuggest datalist
 
-    const MAX_DAILY_HOURS = 8.0;
-    // Popup için zaman seçenekleri (log.js ile aynı olabilir veya farklı)
-    const commonPopupDurations = [0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 8.0]; // Örnek
+    saveButton.addEventListener('click', handleSaveLog);
+    viewLogsLink.addEventListener('click', openLogPage);
 
-    // Hızlı zaman seçimi radio butonlarını oluşturur (Popup için)
-    function populateTimeOptionsPopup() {
-        timeOptionsContainerPopup.innerHTML = ''; // Önce temizle
-        let defaultChecked = false; // Varsayılan seçildi mi?
+    // Autofocus on the text input
+    logTextInput.focus();
 
-        commonPopupDurations.forEach((duration) => {
-            const valueStr = duration.toFixed(2);
-            // .00 varsa kaldır
-            const displayValue = parseFloat(valueStr).toString();
-            const id = `time-popup-${displayValue.replace('.', '-')}`; // Benzersiz ID
-
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'time-option';
-
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.id = id;
-            radio.name = 'popup-quick-duration';
-            radio.value = displayValue; // Kaydedilecek değer
-
-            // Varsayılan olarak 1.0 saati seçili yapalım
-            if (duration === 1.0) {
-                radio.checked = true;
-                defaultChecked = true;
-            }
-
-            const label = document.createElement('label');
-            label.htmlFor = id;
-            label.textContent = `${displayValue} h`;
-
-            optionDiv.appendChild(radio);
-            optionDiv.appendChild(label);
-            timeOptionsContainerPopup.appendChild(optionDiv);
-
-            // Radio değiştikçe hata mesajını temizle (isteğe bağlı)
-            radio.addEventListener('change', () => {
-                if (radio.checked) {
-                    errorMessagePopup.textContent = '';
-                }
-            });
-        });
-
-        // Eğer 1.0 yoksa veya başka bir nedenle varsayılan seçilemediyse, ilkini seç
-        if (!defaultChecked && commonPopupDurations.length > 0) {
-            const firstRadio = timeOptionsContainerPopup.querySelector('input[type="radio"]');
-            if (firstRadio) {
-                firstRadio.checked = true;
-            }
-        }
-    }
-
-    // Bugünün tarihini YYYY-MM-DD formatında al
-    function getTodayDateString() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    // Veriyi chrome.storage.local'a kaydet (log.js ile aynı formatta: {text, time})
-    async function saveDataPopup() {
-        const text = logTextInputPopup.value.trim();
-        const selectedRadio = timeOptionsContainerPopup.querySelector('input[name="popup-quick-duration"]:checked');
-        const todayStr = getTodayDateString();
-
-        errorMessagePopup.textContent = ''; // Hata mesajını temizle
-
-        if (!text) {
-            errorMessagePopup.textContent = 'Açıklama boş olamaz.';
-            logTextInputPopup.focus();
-            return;
-        }
-
-        if (!selectedRadio) {
-            errorMessagePopup.textContent = 'Lütfen bir süre seçin.';
-            return; // Normalde olmamalı ama kontrol ekleyelim
-        }
-
-        const timeStr = selectedRadio.value;
-        const timeValue = parseFloat(timeStr);
-
-        if (isNaN(timeValue) || timeValue <= 0) {
-            // Bu da normalde olmamalı
-            errorMessagePopup.textContent = 'Geçersiz süre seçimi.';
-            return;
-        }
-
-        try {
-            // Mevcut veriyi chrome.storage'dan oku
-            const result = await chrome.storage.local.get(['effortLogData']);
-            const allData = result.effortLogData || {};
-            const todayEntries = allData[todayStr] || [];
-
-            // Günlük toplam süreyi hesapla
-            let currentTotalDuration = todayEntries.reduce((sum, entry) => sum + (parseFloat(entry.time) || 0), 0);
-
-            // Yeni eklenecek süre ile 8 saat limitini kontrol et
-            if (currentTotalDuration + timeValue > MAX_DAILY_HOURS) {
-                const remaining = (MAX_DAILY_HOURS - currentTotalDuration).toFixed(2);
-                errorMessagePopup.textContent = `Günlük ${MAX_DAILY_HOURS} saat limiti aşılamaz. Kalan: ${remaining} saat.`;
-                return;
-            }
-
-            // Yeni kaydı ekle ({text, time} formatında, time string olarak formatlı)
-            todayEntries.push({ text: text, time: timeValue.toFixed(2) });
-            allData[todayStr] = todayEntries;
-
-            // Güncellenmiş veriyi chrome.storage'a kaydet
-            await chrome.storage.local.set({ effortLogData: allData });
-
-            // Başarılı kayıttan sonra popup'ı kapat
-            window.close();
-
-        } catch (error) {
-            console.error('Veri kaydedilirken hata:', error);
-            errorMessagePopup.textContent = 'Bir hata oluştu, kayıt yapılamadı.';
-        }
-    }
-
-    // Kaydet butonuna tıklama olayı
-    saveButtonPopup.addEventListener('click', saveDataPopup);
-
-    // Enter tuşu ile kaydetme (açıklama alanındayken)
-    logTextInputPopup.addEventListener('keypress', (event) => {
+    // Enter key listener on text input
+    logTextInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            // Zaman seçiliyse kaydetmeyi dene
-            const selectedRadio = timeOptionsContainerPopup.querySelector('input[name="popup-quick-duration"]:checked');
-            if (selectedRadio) {
-                saveDataPopup();
-            } else {
-                errorMessagePopup.textContent = 'Lütfen bir süre seçin.';
+            event.preventDefault(); // Prevent form submission if wrapped in form
+            handleSaveLog();
+        }
+    });
+
+    // Natural Language Processing on input change/blur
+    logTextInput.addEventListener('input', parseLogInput);
+    logTextInput.addEventListener('blur', parseLogInput);
+
+    // Enter key listener on radio buttons
+    timeOptionsContainer.addEventListener('keydown', (event) => {
+        if (event.target.type === 'radio' && event.key === 'Enter') {
+            event.preventDefault();
+            handleSaveLog();
+        }
+    });
+
+    // Double click on labels to save
+     timeOptionsContainer.addEventListener('dblclick', (event) => {
+        if (event.target.tagName === 'LABEL') {
+            const radioId = event.target.getAttribute('for');
+            if(radioId) {
+                const radio = document.getElementById(radioId);
+                if(radio) {
+                    radio.checked = true;
+                    handleSaveLog();
+                }
             }
         }
     });
 
-    // Logları görüntüle linkine tıklama olayı
-    viewLogsLinkPopup.addEventListener('click', (e) => {
-        e.preventDefault();
-        // background.js'e log sayfasını açması için mesaj gönder
-        chrome.runtime.sendMessage({ action: "openLogPage" }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error("Background script'e mesaj gönderilemedi:", chrome.runtime.lastError.message);
-                // Doğrudan açmayı dene (fallback)
-                try {
-                    chrome.tabs.create({ url: chrome.runtime.getURL("html/log.html") });
-                } catch (tabError) {
-                    console.error("Log sayfası doğrudan açılamadı:", tabError);
-                    alert("Log sayfası açılamadı. Lütfen tekrar deneyin.");
-                }
-            } else if (response && response.success) {
-                // console.log("Log sayfası açma isteği gönderildi.");
+});
+
+// --- Theme Management ---
+ function applyPopupTheme(theme) {
+    const newTheme = theme || 'dark'; // Default to dark if undefined
+    const isLight = newTheme === 'light';
+
+    bodyElement.classList.remove('dark-theme', 'light-theme');
+    bodyElement.classList.add(isLight ? 'light-theme' : 'dark-theme');
+
+    // Dynamically switch CSS (Requires <link> tags in popup.html)
+    const darkLink = document.getElementById('dark-theme-link');
+    const lightLink = document.getElementById('light-theme-link');
+
+    if (darkLink && lightLink) {
+        darkLink.disabled = isLight;
+        lightLink.disabled = !isLight;
+    } else {
+        console.warn("Theme CSS link tags not found in popup.html");
+        // Fallback or alternative styling method might be needed
+    }
+}
+
+async function loadThemePreference() {
+    return new Promise((resolve) => {
+        chrome.storage.local.get(['preferredTheme'], (result) => {
+            const savedTheme = result.preferredTheme;
+            let themeToApply;
+
+            if (!savedTheme) {
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                themeToApply = prefersDark ? 'dark' : 'light';
             } else {
-                // console.log("Background script'ten beklenmeyen yanıt:", response);
+                themeToApply = savedTheme;
+            }
+            applyPopupTheme(themeToApply);
+            resolve();
+        });
+    });
+}
+
+
+// --- UI Population ---
+function populateTimeOptions() {
+    timeOptionsContainer.innerHTML = ''; // Clear existing
+    defaultTimeOptions.forEach((time) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('time-option');
+
+        const radioId = `popup-time-${time.toString().replace('.', '-')}`;
+        const radioInput = document.createElement('input');
+        radioInput.type = 'radio';
+        radioInput.id = radioId;
+        radioInput.name = 'duration-popup';
+        radioInput.value = time;
+
+        const label = document.createElement('label');
+        label.setAttribute('for', radioId);
+        label.textContent = `${time} sa`;
+        label.title = `Süreyi ${time} saat olarak ayarla (Kaydetmek için çift tıkla)`; // Tooltip
+
+        optionDiv.appendChild(radioInput);
+        optionDiv.appendChild(label);
+        timeOptionsContainer.appendChild(optionDiv);
+    });
+}
+
+async function loadRecentLogs() {
+    try {
+        const result = await chrome.storage.local.get(['effortLogs']);
+        const allLogs = result.effortLogs || {};
+        const descriptionCounts = {};
+        const today = new Date().toISOString().split('T')[0].substring(0, 7); // Current YYYY-MM
+
+        // Count descriptions from recent logs (e.g., last 30 days or current month)
+        Object.entries(allLogs).forEach(([date, logs]) => {
+             if (date.substring(0, 7) === today || isWithinLastNDays(date, 30)) { // Check current month or last 30 days
+                logs.forEach(log => {
+                    let desc = log.text.trim();
+                    // Exclude entries that might just be times from natural parsing
+                    if (!/^\d+(\.\d{1,2})?$/.test(desc)) {
+                        descriptionCounts[desc] = (descriptionCounts[desc] || 0) + 1;
+                    }
+                });
             }
         });
-        window.close(); // Mesaj gönderildikten sonra popup'ı kapat
-    });
 
-    // Başlangıçta süre seçeneklerini doldur
-    populateTimeOptionsPopup();
+        // Sort by frequency and get top suggestions
+        const sortedDescriptions = Object.entries(descriptionCounts)
+            .sort(([, countA], [, countB]) => countB - countA)
+            .map(([desc]) => desc)
+            .slice(0, 5); // Get top 5
 
-    // Açıklama alanına odaklan
-    logTextInputPopup.focus();
+        // Populate datalist
+        datalistElement.innerHTML = ''; // Clear existing
+        sortedDescriptions.forEach(desc => {
+            const option = document.createElement('option');
+            option.value = desc;
+            datalistElement.appendChild(option);
+        });
 
-}); // DOMContentLoaded sonu
+    } catch (error) {
+        console.error('Error loading recent logs for autosuggest:', error);
+    }
+}
+
+// Helper for date check
+function isWithinLastNDays(dateString, days) {
+    const date = new Date(dateString);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return date >= cutoff;
+}
+
+
+// --- Event Handlers & Logic ---
+function parseLogInput() {
+    const currentText = logTextInput.value.trim();
+
+    // Only parse if text is reasonably long to avoid parsing just "1"
+    if (currentText.length < MIN_LOG_TEXT_LENGTH) {
+        return;
+    }
+
+    const match = currentText.match(TIME_REGEX);
+
+    if (match && match[1]) {
+        const time = parseFloat(match[1]);
+        const textWithoutTime = currentText.substring(0, match.index).trim();
+
+        // Check if the extracted time matches a radio button
+        const matchingRadio = timeOptionsContainer.querySelector(`input[value="${time}"]`);
+        if (matchingRadio) {
+            // If time found and radio exists, update text and select radio
+             if (logTextInput.value !== textWithoutTime) { // Prevent infinite loop if already parsed
+                logTextInput.value = textWithoutTime; // Remove time from text input
+            }
+            if (!matchingRadio.checked) {
+                 matchingRadio.checked = true; // Select the corresponding radio
+            }
+        }
+        // If time found but no matching radio, maybe fill a hidden time input?
+        // For now, we primarily use it to select existing radio options.
+    }
+}
+
+
+async function handleSaveLog() {
+    errorMessage.textContent = ''; // Clear previous error
+    const text = logTextInput.value.trim();
+    let time = null;
+
+    // Get time from selected radio button
+    const selectedRadio = timeOptionsContainer.querySelector('input[name="duration-popup"]:checked');
+    if (selectedRadio) {
+        time = parseFloat(selectedRadio.value);
+    } else {
+        // Attempt to parse time from text *again* if no radio selected
+         const match = text.match(TIME_REGEX);
+         if(match && match[1]) {
+             time = parseFloat(match[1]);
+             // Keep the original text as entered by the user if parsed here
+         }
+    }
+
+    // Validation
+    if (!text) {
+        errorMessage.textContent = 'Lütfen bir açıklama girin.';
+        logTextInput.focus();
+        return;
+    }
+    if (time === null || isNaN(time) || time <= 0) {
+        errorMessage.textContent = 'Lütfen geçerli bir süre seçin veya girin (örn: Proje A 1.5).';
+        // Maybe focus first radio?
+        const firstRadio = timeOptionsContainer.querySelector('input[type="radio"]');
+        if (firstRadio) firstRadio.focus();
+        return;
+    }
+
+    // Prepare log entry (remove time from text if it was parsed and radio selected)
+     let logTextToSave = text;
+     if (selectedRadio) { // If radio was selected, ensure time suffix is removed from text
+         const match = text.match(TIME_REGEX);
+         if (match) {
+             logTextToSave = text.substring(0, match.index).trim();
+         }
+     }
+
+
+    const logEntry = {
+        text: logTextToSave,
+        time: time
+    };
+    const todayDate = new Date().toISOString().split('T')[0];
+
+    // Save to storage
+    try {
+        const result = await chrome.storage.local.get(['effortLogs']);
+        const logs = result.effortLogs || {};
+        if (!logs[todayDate]) {
+            logs[todayDate] = [];
+        }
+        logs[todayDate].push(logEntry);
+        await chrome.storage.local.set({ effortLogs: logs });
+
+        // Provide feedback & close
+        saveButton.textContent = 'Kaydedildi!';
+        saveButton.style.backgroundColor = '#1a7f37'; // Darker green
+        logTextInput.value = ''; // Clear input
+        if (selectedRadio) selectedRadio.checked = false; // Deselect radio
+        loadRecentLogs(); // Refresh datalist
+
+        setTimeout(() => {
+            saveButton.textContent = 'Kaydet';
+            saveButton.style.backgroundColor = ''; // Reset color
+             window.close(); // Close popup after success
+        }, 800); // Shorter delay
+
+    } catch (error) {
+        console.error('Error saving log:', error);
+        errorMessage.textContent = 'Kaydetme hatası: ' + error.message;
+        saveButton.textContent = 'Kaydet'; // Reset button text on error
+    }
+}
+
+function openLogPage(event) {
+    event.preventDefault(); // Prevent default link behavior
+    // Send message to background script to open the log page
+    chrome.runtime.sendMessage({ action: "openLogPage" });
+    window.close(); // Close the popup after sending the message
+}
