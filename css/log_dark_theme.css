@@ -1,14 +1,14 @@
+/* --- START OF FILE EfforLogger/css/log_dark_theme.css --- */
 :root {
-    /* Dark Theme Renk Paleti */
-    --primary-color: #58a6ff; /* Daha parlak mavi */
-    --bg-color: #0d1117; /* GitHub Koyu Ana Arkaplan */
-    --content-bg: #161b22; /* İçerik Alanı Arkaplanı */
-    --sidebar-bg: #161b22; /* Sidebar Arkaplanı */
-    --border-color: #30363d; /* Kenarlık Rengi */
-    --text-color: #c9d1d9; /* Ana Metin Rengi */
-    --text-secondary-color: #8b949e; /* İkincil Metin Rengi (örn. log yok) */
-    --hover-bg-color: #21262d; /* Hover Arkaplan Rengi */
-    --input-bg: #0d1117; /* Input Arkaplanı */
+    --primary-color: #58a6ff;
+    --bg-color: #0d1117;
+    --content-bg: #161b22;
+    --sidebar-bg: #161b22;
+    --border-color: #30363d;
+    --text-color: #c9d1d9;
+    --text-secondary-color: #8b949e;
+    --hover-bg-color: #21262d;
+    --input-bg: #0d1117;
     --input-border: #30363d;
     --input-text-color: var(--text-color);
     --button-danger: #f85149;
@@ -19,611 +19,184 @@
     --button-copy-hover-text: #ffffff;
     --log-separator-color: #21262d;
     --log-hover-bg: #21262d;
-    --time-badge-bg: #30363d; /* Saat rozeti arkaplanı */
-    --time-badge-color: #8b949e; /* Saat rozeti metin rengi */
-    --modal-bg: rgba(13, 17, 23, 0.8); /* Overlay arkaplanı */
-    --modal-box-bg: #161b22; /* Modal kutusu arkaplanı */
-    --link-color: var(--primary-color); /* Bağlantı rengi (varsa) */
-    --error-color: var(--button-danger); /* Hata mesajı rengi */
+    --time-badge-bg: #30363d;
+    --time-badge-color: #8b949e;
+    --modal-bg: rgba(13, 17, 23, 0.85);
+    --modal-box-bg: #161b22;
+    --link-color: var(--primary-color);
+    --error-color: var(--button-danger);
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --border-radius: 6px;
+    --weekend-bg-color: #100c17;
+    --saturday-bg-color: #100c17;
+    --holiday-bg-color: #161b22;
+    --today-border-color: var(--primary-color);
+    --shadow-color: rgba(0, 0, 0, 0.25);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: var(--font-family);
     margin: 0;
     padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
     height: 100vh;
-    overflow: hidden; /* Sayfanın kaymasını engelle */
+    overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* WebKit (Chrome, Safari, Edge, Opera) için */
-::-webkit-scrollbar {
-    width: 8px; /* Dikey scrollbar genişliği */
-    height: 8px; /* Yatay scrollbar yüksekliği (varsa) */
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--content-bg); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background-color: var(--text-secondary-color); border-radius: 4px; border: 1px solid var(--content-bg); }
+::-webkit-scrollbar-thumb:hover { background-color: var(--text-color); }
+::-webkit-scrollbar-corner { background: transparent; }
 
-/* Scrollbar'ın arka planı (track) */
-::-webkit-scrollbar-track {
-    background: var(
-            --content-bg
-    ); /* İçerik arkaplanı ile aynı veya biraz daha koyu */
-    border-radius: 4px; /* Köşe yuvarlaklığı */
-    /* border: 1px solid var(--border-color); İsteğe bağlı: Kenarlık */
-}
+.app-container { display: flex; width: 100%; height: 100%; }
 
-/* Scrollbar'ın hareket eden kısmı (thumb) */
-::-webkit-scrollbar-thumb {
-    background-color: var(
-            --text-secondary-color
-    ); /* Başparmak rengi (soluk gri) */
-    border-radius: 4px; /* Köşe yuvarlaklığı */
-    border: 1px solid var(--content-bg); /* Track ile arada ince bir boşluk hissi verir */
-}
-
-/* Scrollbar thumb'ının üzerine gelince */
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--text-color); /* Hover'da biraz daha belirgin */
-    /* border-color: var(--primary-color); İsteğe bağlı: Hover'da kenarlık rengi */
-}
-
-/* Köşe (dikey ve yatay scrollbar kesişimi - genellikle görünmez) */
-::-webkit-scrollbar-corner {
-    background: transparent;
-}
-
-.app-container {
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
-
-/* --- Sidebar --- */
 .sidebar {
-    width: 70px;
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 20px;
-    flex-shrink: 0; /* Sidebar'ın küçülmesini engelle */
-    z-index: 10; /* Diğer içeriklerin üzerine çıkabilir */
+    width: 70px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color);
+    display: flex; flex-direction: column; align-items: center; padding-top: 20px; flex-shrink: 0;
+    z-index: 10; transition: background-color 0.3s ease;
 }
-
 .sidebar button {
-    background: none;
-    border: none;
-    color: var(--text-secondary-color); /* Pasif ikon rengi */
-    font-size: 24px; /* İkon boyutu */
-    padding: 15px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    border-radius: 8px;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    background: none; border: none; color: var(--text-secondary-color); font-size: 24px; padding: 15px;
+    margin-bottom: 15px; cursor: pointer; border-radius: 8px; width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center; position: relative;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
 }
+.sidebar button:hover { background-color: var(--hover-bg-color); color: var(--text-color); }
+.sidebar button.active { background-color: rgba(88, 166, 255, 0.15); color: var(--primary-color); }
+.sidebar button:active { transform: scale(0.95); }
 
-.sidebar button:hover {
-    background-color: var(--hover-bg-color);
-    color: var(--text-color); /* Hover'da daha belirgin renk */
-}
-
-.sidebar button.active {
-    background-color: rgba(88, 166, 255, 0.15); /* Aktif arka plan */
-    color: var(--primary-color); /* Aktif ikon rengi */
-}
-
-/* --- Main Content --- */
-.main-content {
-    flex-grow: 1;
-    /* padding: 20px; Kaldırıldı, view'lar kendi padding'ini yönetsin */
-    overflow: hidden; /* View'ların taşmasını engelle */
-    height: 100%;
-    display: flex; /* İçindeki view'ı esnetmek için */
-}
-
+.main-content { flex-grow: 1; overflow: hidden; height: 100%; display: flex; position: relative; }
 .view {
-    display: none; /* Başlangıçta tüm görünümler gizli */
-    width: 100%;
-    height: 100%;
-    overflow-y: auto; /* Gerekirse view içinde scroll */
-    padding: 20px; /* View'lara padding ver */
-    box-sizing: border-box;
+    display: none; width: 100%; height: 100%; overflow-y: auto; padding: 25px; box-sizing: border-box;
+    opacity: 0; transition: opacity 0.3s ease-in-out; position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
 }
+.view.active { display: flex; flex-direction: column; opacity: 1; position: relative; z-index: 1; }
+.loading-spinner { border: 4px solid var(--border-color); border-left-color: var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 50px auto; flex-shrink: 0; align-self: center; justify-self: center; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.loading-text { text-align: center; color: var(--text-secondary-color); margin-top: 15px; font-size: 1.1em; flex-shrink: 0; align-self: center; justify-self: center; }
 
-.view.active {
-    display: flex; /* Aktif görünümü göster (flex ile içerik yönetimi) */
-    flex-direction: column; /* İçerik alt alta dizilsin */
-}
+#calendar-view { flex-direction: row; gap: 25px; flex-wrap: wrap; align-content: flex-start; }
+.month-container { background-color: var(--content-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px var(--shadow-color); flex: 1; min-width: 360px; height: 100%; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; transition: background-color 0.3s ease; }
+.month-container h3 { text-align: center; margin: 0; padding: 15px; border-bottom: 1px solid var(--border-color); color: var(--primary-color); font-weight: 600; flex-shrink: 0; }
+.day-list { list-style: none; padding: 15px; margin: 0; overflow-y: auto; flex-grow: 1; }
+.day-item { border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 10px; background-color: var(--bg-color); cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; overflow: hidden; position: relative; pointer-events: auto; }
+.day-item:not(.holiday):hover { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); background-color: var(--hover-bg-color); }
+.day-item.weekend { background-color: var(--weekend-bg-color); }
+.day-item.saturday { background-color: var(--saturday-bg-color); }
+.day-item.holiday { background-color: var(--holiday-bg-color); opacity: 0.85; cursor: default; pointer-events: none; }
+.day-item.holiday:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
+.day-item.holiday .day-header { color: var(--text-secondary-color); }
+.holiday-name { font-style: italic; font-size: 0.85em; color: var(--text-secondary-color); margin-left: 5px; }
+.day-item.today { border-color: var(--today-border-color); background-color: rgba(88, 166, 255, 0.1); border-width: 1px;}
+.day-item.today .day-header { background-color: rgba(88, 166, 255, 0.15); }
+.day-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background-color: var(--content-bg); border-bottom: 1px solid var(--border-color); position: relative; }
+.day-header .date-info { flex-grow: 1; font-weight: 500; font-size: 0.95em; color: var(--text-color); }
+.day-total-time { font-size: 0.8em; color: var(--time-badge-color); background-color: var(--time-badge-bg); padding: 3px 8px; border-radius: 10px; font-weight: 500; flex-shrink: 0; white-space: nowrap; margin-left: 8px; }
+.day-header .date-info .day-name { color: var(--text-secondary-color); font-size: 0.9em; margin-left: 5px; }
+.day-buttons { display: flex; align-items: center; pointer-events: auto; }
+.day-buttons button { background: none; border: none; color: var(--text-secondary-color); border-radius: 4px; padding: 5px; margin-left: 6px; cursor: pointer; font-size: 14px; transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease; line-height: 1; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; opacity: 0.5; }
+.day-item:hover .day-buttons button { opacity: 1; }
+.day-buttons button:hover { background-color: var(--hover-bg-color); transform: scale(1.1); }
+.day-buttons button.clear-day-logs:hover { color: var(--button-danger); }
+.day-buttons button.copy-day-logs:hover { color: var(--button-copy); }
+.day-buttons button.copy-to-next-day:hover { color: var(--primary-color); }
+.day-buttons button.add-log-placeholder { opacity: 0.4; }
+.day-buttons button.copied { color: var(--button-copy); background-color: rgba(63, 185, 80, 0.15); transform: scale(1.1); }
+.day-buttons button.copied:hover { background-color: rgba(63, 185, 80, 0.25); }
+.log-list { list-style: none; padding: 5px 0; margin: 0; font-size: 14px; pointer-events: auto; }
+.log-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--log-separator-color); cursor: grab; transition: opacity 0.2s ease, background-color 0.2s ease; position: relative; pointer-events: auto; }
+.log-item .jira-icon { position: relative; margin-left: 8px; color: var(--primary-color); opacity: 0.7; font-size: 0.9em; cursor: help; transition: opacity 0.2s ease; order: 3; background-color: rgba(0, 0, 0, 0.05); padding: 2px 5px; border-radius: 4px; display: none; }
+.log-item:hover .jira-icon { display: inline-block; }
+.log-item:not(.disabled-log):hover { background-color: var(--log-hover-bg); }
+.log-item:last-child { border-bottom: none; }
+.log-item.disabled-log { cursor: default; opacity: 0.7; pointer-events: none; }
+.log-item.disabled-log:hover { background-color: inherit; }
+.log-text { flex-grow: 1; margin-right: 10px; color: var(--text-color); font-size: 0.9em; line-height: 1.4; word-break: break-word; display: inline-flex; align-items: center; }
+.log-emoji { margin-right: 5px; font-size: 1.1em; }
+.log-time { font-weight: 500; background-color: var(--time-badge-bg); color: var(--time-badge-color); padding: 2px 7px; border-radius: 10px; font-size: 0.75em; flex-shrink: 0; white-space: nowrap; }
+.log-time::after { content: ' sa'; font-size: 0.9em; opacity: 0.8; }
+.no-logs { font-style: italic; color: var(--text-secondary-color); font-size: 0.85em; text-align: center; padding: 15px; transition: background-color 0.2s ease, color 0.2s ease; pointer-events: auto; }
+.no-logs.holiday-info { cursor: default; font-weight: 500; }
+.no-logs.holiday-info:hover { background-color: inherit; }
+.no-logs:not(.holiday-info) { cursor: pointer; }
+.no-logs:not(.holiday-info):hover { background-color: var(--hover-bg-color); color: var(--text-color); }
 
-/* --- Calendar View --- */
-#calendar-view {
-    /* Flex ayarları .active class'ından geliyor */
-    flex-direction: row; /* Aylar yan yana */
-    gap: 20px; /* Aylar arası boşluk */
-    flex-wrap: wrap; /* Küçük ekranlarda alt alta geçsin */
-    align-content: flex-start; /* Yukarıdan başlasın */
-}
+.log-item.dragging { opacity: 0.4; cursor: grabbing; background: var(--hover-bg-color) !important; border: 1px dashed var(--primary-color); z-index: 10; }
+.day-item.drag-over { background-color: rgba(88, 166, 255, 0.15); border-color: var(--primary-color); }
+.day-item.drag-over .log-list { outline: 1px dashed var(--primary-color); background-color: rgba(255, 255, 255, 0.05); }
+.log-list .drop-indicator { height: 3px; background-color: var(--primary-color); margin: 1px 5px; border-radius: 2px; list-style-type: none; pointer-events: none; opacity: 0.8; }
+body.dragging-log * { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
 
-.month-container {
-    background-color: var(--content-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    /* padding: 15px; Kaldırıldı, başlık ve liste kendi padding'ini ayarlar */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Daha belirgin gölge */
-    flex: 1; /* Aylar eşit genişlikte olsun */
-    min-width: 350px; /* Minimum genişlik */
-    /* max-width: 500px; İsteğe bağlı: Maksimum genişlik */
-    height: calc(100% - 0px); /* View padding'i düşüldü (%100 olmalı) */
-    display: flex; /* İçerik yönetimi */
-    flex-direction: column; /* Başlık üstte, liste altta */
-    overflow: hidden; /* İç scroll'u listeye ver */
-    box-sizing: border-box;
-}
+#log-entry-view { cursor: pointer; background-color: var(--content-bg); border: 2px dashed var(--border-color); border-radius: 8px; align-items: center; justify-content: center; font-size: 1.5em; color: var(--text-secondary-color); transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease; }
+#log-entry-view:hover { border-color: var(--primary-color); color: var(--primary-color); background-color: var(--hover-bg-color); }
+.log-entry-view-text { pointer-events: none; display: flex; align-items: center; gap: 10px; }
 
-.month-container h3 {
-    text-align: center;
-    margin: 0;
-    padding: 15px; /* Başlık padding'i */
-    border-bottom: 1px solid var(--border-color);
-    color: var(--primary-color);
-    font-weight: 600;
-    flex-shrink: 0; /* Başlık küçülmesin */
-}
+#summary-view h2.summary-title { text-align: center; color: var(--primary-color); margin-bottom: 25px; font-weight: 600; }
+.summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; width: 100%; box-sizing: border-box; }
+.summary-widget { background-color: var(--content-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px 25px; box-shadow: 0 2px 5px var(--shadow-color); display: flex; flex-direction: column; }
+.summary-widget h3 { margin-top: 0; margin-bottom: 15px; color: var(--text-secondary-color); font-weight: 500; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+#cal-heatmap-widget { grid-column: 1 / -1; overflow-x: auto; overflow-y: hidden; padding-bottom: 10px; }
+#cal-heatmap-graph { min-height: 180px; margin-bottom: 10px; display: inline-block; vertical-align: top; }
+#cal-heatmap-legend { height: 20px; margin: 10px auto 0 auto; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-container { position: relative; min-height: 250px; height: 250px; width: 100%; margin-top: 10px; flex-grow: 1; }
+#hourglassCanvas { max-width: 100%; max-height: 100%; }
+#fun-facts-list { list-style: none; padding-left: 0; margin: 0; font-size: 0.9em; line-height: 1.8; flex-grow: 1; }
+#fun-facts-list li { margin-bottom: 10px; padding-left: 25px; position: relative; }
+#fun-facts-list li i { position: absolute; left: 0; top: 5px; color: var(--primary-color); opacity: 0.7; font-size: 0.9em; width: 15px; text-align: center; }
+#fun-facts-list strong { color: var(--text-color); font-weight: 500; }
+.error-subtle { color: var(--text-secondary-color); font-style: italic; font-size: 0.9em; text-align: center; padding: 20px; }
+@media (max-width: 850px) { .summary-grid { grid-template-columns: 1fr; } #cal-heatmap-widget { grid-column: auto; } .chart-container { height: 280px; } }
 
-.day-list {
-    list-style: none;
-    padding: 15px; /* Liste padding'i */
-    margin: 0;
-    overflow-y: auto; /* Sadece gün listesi scroll etsin */
-    flex-grow: 1; /* Kalan alanı kaplasın */
-}
+#log-input-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-bg); align-items: center; justify-content: center; z-index: 1000; display: none; padding: 20px; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease; }
+#log-input-overlay.show { display: flex; opacity: 1; }
+.log-input-box { background-color: var(--modal-box-bg); padding: 30px 35px; border-radius: 10px; border: 1px solid var(--border-color); box-shadow: 0 10px 40px var(--shadow-color); display: flex; flex-direction: column; gap: 18px; width: 90%; max-width: 550px; margin: auto; box-sizing: border-box; transform: scale(0.95); transition: transform 0.3s ease; position: relative; }
+#log-input-overlay.show .log-input-box { transform: scale(1); }
+.log-input-box button.danger { background-color: transparent; color: var(--button-danger); border: 1px solid var(--button-danger); }
+.log-input-box button.danger:hover { background-color: var(--button-danger-hover-bg); color: var(--button-danger-hover-text); border-color: var(--button-danger-hover-bg); }
+.time-options-section { margin-top: 5px; margin-bottom: 5px; }
+.time-options-label { font-size: 0.85em; color: var(--text-secondary-color); margin-bottom: 8px; font-weight: 500; }
+.time-options-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.time-option input[type="radio"] { opacity: 0; position: fixed; width: 0; }
+.time-option label { display: inline-block; padding: 8px 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 18px; cursor: pointer; font-size: 0.9em; color: var(--text-secondary-color); transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; user-select: none; }
+.time-option input[type="radio"]:checked + label { background-color: var(--primary-color); color: var(--modal-box-bg); border-color: var(--primary-color); font-weight: 500; }
+.time-option label:hover { border-color: var(--text-color); color: var(--text-color); }
+.time-option input[type="radio"]:checked + label:hover { background-color: #4a9dec; border-color: #4a9dec; }
+.time-option input[type="radio"]:focus-visible + label { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+.log-input-box h4 { margin-top: 0; margin-bottom: 5px; text-align: center; color: var(--primary-color); font-weight: 600; font-size: 1.2em; }
 
-.day-item {
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 10px;
-    /* padding: 10px; Kaldırıldı, header ve log listesi kendi padding'ini alır */
-    background-color: var(
-            --bg-color
-    ); /* Gün arkaplanı ana arkaplanla aynı */
-    cursor: pointer; /* Günlere tıklanabilirlik hissi */
-    transition: border-color 0.2s ease;
-    overflow: hidden; /* İçerik taşmasın */
-}
-
-.day-item.disabled-day {
-    background-color: var(
-            --hover-bg-color
-    ); /* Normalden biraz farklı bir arka plan */
-    opacity: 0.7; /* Biraz soluklaştır */
-    cursor: not-allowed; /* Tıklanamaz imleci */
-    border-color: var(--border-color); /* Vurgulu kenarlığı kaldır */
-}
-
-/* Tatil günlerinin üzerine gelince vurguyu kaldır */
-.day-item.disabled-day:hover {
-    border-color: var(--border-color); /* Kenarlık değişmesin */
-    background-color: var(--hover-bg-color); /* Arka plan değişmesin */
-}
-
-/* Tatil günü başlığı */
-.day-item.disabled-day .day-header {
-    /* Belki başlık rengini biraz soluklaştırabiliriz */
-    color: var(--text-secondary-color);
-    /* background-color: var(--content-bg); Varsayılanı koruyabilir */
-}
-
-/* Tatil adı için stil */
-.holiday-name {
-    font-style: italic;
-    font-size: 0.85em;
-    color: var(--text-secondary-color);
-    margin-left: 5px;
-}
-
-/* Tatil günündeki log listesi ve item'ları */
-.day-item.disabled-day .log-list {
-    /* Belki log listesini de biraz soluklaştırır */
-    /* opacity: 0.8; */
-}
-
-.log-item.disabled-log {
-    cursor: default; /* Tıklanabilir olmadığını belirt */
-}
-.log-item.disabled-log:hover {
-    background-color: inherit; /* Hover efektini kaldır */
-}
-
-/* Tatil gününde log olmadığında gösterilecek özel mesaj */
-.no-logs.holiday-info {
-    color: var(--text-secondary-color);
-    font-weight: 500;
-}
-
-.no-logs:not(.holiday-info):hover {
-    /* Tatil bilgisi değilse hover efekti ver */
-    background-color: var(--hover-bg-color);
-    color: var(--text-color);
-}
-
-.day-item.disabled-day .no-logs {
-    cursor: not-allowed; /* Tatilde tıklanamaz */
-}
-
-.day-item.disabled-day .no-logs:hover {
-    background-color: inherit; /* Tatilde hover efekti olmasın */
-}
-
-.day-item:not(.disabled-day):hover { /* Sadece tıklanabilir günlerde hover */
-    border-color: var(
-            --primary-color
-    ); /* Hover'da kenarlık rengi değişsin */
-}
-
-/* YENİ: Bugünkü günü vurgula */
-.day-item.today {
-    border-color: var(--primary-color); /* Daha belirgin bir kenarlık */
-    background-color: rgba(88, 166, 255, 0.1); /* Hafif mavi arka plan */
-    /* İsteğe bağlı: Daha kalın kenarlık veya farklı bir arka plan */
-    /* border-width: 2px; */
-}
-/* Bugünün başlığını da biraz farklılaştırabiliriz (isteğe bağlı) */
-.day-item.today .day-header {
-    background-color: rgba(
-            88,
-            166,
-            255,
-            0.15
-    ); /* Başlık arka planı da hafif mavi */
-}
-
-.day-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px; /* Header padding */
-    background-color: var(--content-bg); /* Header arkaplanı farklı */
-    border-bottom: 1px solid var(--border-color);
-}
-.day-header .date-info {
-    flex-grow: 1;
-    font-weight: 500;
-    font-size: 0.95em;
-    color: var(--text-color);
-}
-.day-total-time {
-    font-size: 0.8em;
-    color: var(--time-badge-color);
-    background-color: var(--time-badge-bg);
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-weight: 500;
-    flex-shrink: 0; /* Küçülmesin */
-    white-space: nowrap; /* Tek satırda kalsın */
-    margin-left: 8px; /* Soldaki elemandan ayır */
-}
-.day-header .date-info .day-name {
-    color: var(--text-secondary-color);
-    font-size: 0.9em;
-    margin-left: 5px;
-}
-
-.day-buttons {
-    display: flex; /* Butonları yan yana getir */
-    align-items: center; /* Dikey hizala */
-}
-
-.day-buttons button {
-    background: none;
-    border: none; /* Kenarlıksız ikon butonlar */
-    color: var(--text-secondary-color);
-    border-radius: 4px;
-    padding: 5px; /* Daha iyi tıklama alanı */
-    margin-left: 6px;
-    cursor: pointer;
-    font-size: 14px; /* İkon boyutu */
-    transition: background-color 0.2s ease, color 0.2s ease;
-    line-height: 1; /* İkonu ortala */
-    width: 26px; /* Sabit genişlik/yükseklik */
-    height: 26px;
-    display: inline-flex; /* İkonu ortalamak için */
-    align-items: center;
-    justify-content: center;
-}
-.day-buttons button:hover {
-    background-color: var(--hover-bg-color);
-}
-
-.day-buttons button.clear-day-logs:hover {
-    color: var(--button-danger);
-}
-.day-buttons button.copy-day-logs:hover {
-    color: var(--button-copy);
-}
-.day-buttons button.copy-day-logs.copied {
-    color: var(--button-copy); /* Başarı rengi */
-    background-color: rgba(63, 185, 80, 0.15); /* Hafif yeşil arka plan */
-}
-.day-buttons button.copy-day-logs.copied:hover {
-    background-color: rgba(63, 185, 80, 0.25);
-}
-.day-buttons button.add-log-placeholder:hover {
-    color: var(--primary-color); /* Hover'da mavi yap */
-    opacity: 0.8 !important;
-}
-
-
-.log-list {
-    list-style: none;
-    padding: 0; /* Kenarlardan boşluk olmasın, log-item'a verilecek */
-    margin: 0;
-    font-size: 14px;
-    /* Arkaplan rengi day-item'dan gelecek */
-}
-
-/* Geliştirilmiş Log Item Stili */
-.log-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px; /* Log içi boşluk */
-    border-bottom: 1px solid var(--log-separator-color);
-    cursor: grab; /* Sürükleme imleci */
-    transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transitions */
-}
-.log-item:not(.disabled-log):hover { /* Sadece tıklanabilir loglarda hover */
-    background-color: var(--log-hover-bg);
-}
-.log-item:last-child {
-    border-bottom: none;
-}
-.log-text {
-    flex-grow: 1;
-    margin-right: 15px; /* Metin ve saat arası boşluk */
-    color: var(--text-color);
-    font-size: 0.9em;
-    line-height: 1.4;
-    word-break: break-word; /* Uzun kelimeler kırılsın */
-}
-.log-time {
-    font-weight: 500;
-    background-color: var(--time-badge-bg); /* Rozet arkaplanı */
-    color: var(--time-badge-color); /* Rozet metni */
-    padding: 3px 8px;
-    border-radius: 10px; /* Yuvarlak rozet */
-    font-size: 0.8em;
-    flex-shrink: 0; /* Saat bilgisi küçülmesin */
-    white-space: nowrap; /* Saat alta kaymasın */
-}
-.log-time::after { /* ' h' ekini CSS ile ekle */
-    content: ' h';
-    font-size: 0.9em;
-    opacity: 0.8;
-}
-
-/* Log eklenmemiş günler için stil */
-.no-logs {
-    font-style: italic;
-    color: var(--text-secondary-color);
-    font-size: 0.85em;
-    text-align: center;
-    padding: 15px; /* Boşluk */
-    cursor: pointer; /* Tıklanabilir olduğunu göster */
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.no-logs:not(.holiday-info):hover { /* Tatil değilse hover */
-     background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* --- Drag & Drop Styles --- */
-.log-item.dragging {
-    opacity: 0.4;
-    cursor: grabbing;
-}
-
-/* Bırakma hedefi olan günün vurgusu (günler arası taşıma için) */
-.day-item.drag-over .log-list {
-    background-color: rgba(255, 255, 255, 0.1);
-    outline: 1px dashed #aaa;
-    outline-offset: -2px;
-    min-height: 30px;
-}
-
-/* YENİ: Aynı gün içinde sıralama için görsel işaretçi */
-.log-list .drop-indicator {
-    height: 2px;
-    background-color: var(--accent-color, #4a90e2); /* Tema rengi veya belirgin bir renk */
-    margin: 2px 0; /* Üst ve alt loglardan biraz ayır */
-    list-style-type: none; /* Liste işaretini kaldır */
-    pointer-events: none; /* İşaretçinin kendisi olayları engellemesin */
-}
-
-
-/* Sürükleme sırasında sayfa içeriğinin seçilmesini engelle */
-body.dragging-log * {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-/* --- Log Entry View --- */
-#log-entry-view {
-    /* active class'ı display:flex yapar */
-    /* width/height %100, padding 20px .view'dan geliyor */
-    cursor: pointer; /* cell yerine pointer daha uygun */
-    background-color: var(--content-bg); /* Farklı arkaplan */
-    border: 2px dashed var(--border-color); /* Daha uyumlu kenarlık */
-    border-radius: 8px;
-    /* display: flex; .view.active zaten yapıyor */
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    color: var(--text-secondary-color); /* Daha soluk yazı */
-    transition: border-color 0.2s ease, color 0.2s ease;
-}
-#log-entry-view:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-#log-entry-view span {
-    pointer-events: none;
-}
-
-/* --- Log Input Overlay --- */
-#log-input-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--modal-bg);
-    /* display: flex; JS ile eklenecek */
-    align-items: center; /* Dikey ortala */
-    justify-content: center; /* Yatay ortala */
-    z-index: 1000;
-    display: none; /* Başlangıçta gizli */
-    padding: 20px; /* Kenarlardan boşluk bırak ki küçük ekranda taşmasın */
-    box-sizing: border-box;
-}
-#log-input-overlay.show { /* Göstermek için kullanılacak class */
-    display: flex;
-}
-
-
-/* Mevcut .log-input-box stilini bul ve güncelle */
-.log-input-box {
-    background-color: var(--modal-box-bg);
-    padding: 30px 35px; /* İç boşluk (index.html'dekine yakın) */
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    display: flex; /* İçerik düzeni için */
-    flex-direction: column; /* İçerik alt alta */
-    gap: 20px; /* İç elemanlar arası boşluk */
-    /* --- BOYUTLANDIRMA --- */
-    width: 90%; /* Genişlik %90 */
-    max-width: 600px; /* MAKSİMUM genişlik (index.html'den biraz daraltıldı) */
-    /* --- /BOYUTLANDIRMA --- */
-    margin: auto; /* Flexbox ile zaten ortalanır ama ekstra güvence */
-    box-sizing: border-box; /* Padding dahil hesapla */
-    /* position: absolute; ve transform kaldırıldı, flexbox ortalar */
-}
-
-/* Sil butonu için danger class'ı (index.html'deki gibi) */
-.log-input-box button.danger {
-    background-color: transparent; /* Şeffaf arka plan */
-    color: var(--button-danger); /* Kırmızı metin */
-    border: 1px solid var(--button-danger); /* Kırmızı kenarlık */
-}
-.log-input-box button.danger:hover {
-    background-color: var(
-            --button-danger-hover-bg
-    ); /* Koyu kırmızı arka plan */
-    color: var(--button-danger-hover-text); /* Beyaz metin */
-    border-color: var(--button-danger-hover-bg); /* Koyu kırmızı kenarlık */
-}
-
-/* --- Zaman Seçenekleri Stilleri (index.html'den) --- */
-.time-options-label {
-    font-size: 0.9em;
-    color: var(--text-secondary-color);
-    margin-bottom: -5px; /* Seçeneklere biraz daha yakın */
-    font-weight: 500;
-}
-
-.time-options-container {
-    display: flex;
-    flex-wrap: wrap; /* Gerektiğinde alt satıra geç */
-    gap: 10px; /* Seçenekler arası boşluk */
-    padding-top: 10px; /* Üstten boşluk */
-    /* border-top: 1px solid var(--border-color); Ayırıcı çizgi kaldırıldı */
-}
-
-.time-option {
-    /* Konteyner görevi görür, flex item'ı olur */
-}
-
-.time-option input[type="radio"] {
-    /* Gerçek radio butonu gizle */
-    opacity: 0;
-    position: fixed;
-    width: 0;
-}
-
-.time-option label {
-    display: inline-block;
-    padding: 6px 14px; /* İç boşluk */
-    background-color: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Tamamen yuvarlak kenarlar (pill shape) */
-    cursor: pointer;
-    font-size: 0.85em;
-    color: var(--text-secondary-color);
-    transition: background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
-    user-select: none; /* Metin seçilmesini engelle */
-}
-
-/* Seçili radio'nun label'ı */
-.time-option input[type="radio"]:checked + label {
-    background-color: var(--primary-color);
-    color: var(--modal-box-bg); /* Yüksek kontrast */
-    border-color: var(--primary-color);
-    font-weight: 500;
-}
-
-/* Fareyle üzerine gelince */
-.time-option label:hover {
-    border-color: var(--text-color);
-    color: var(--text-color);
-}
-/* Seçili olana hover */
-.time-option input[type="radio"]:checked + label:hover {
-    /* Stil aynı kalsın veya hafif değişsin */
-    background-color: #4a9dec; /* Biraz daha açık mavi */
-    border-color: #4a9dec;
-}
-
-/* Erişilebilirlik için focus stili (focus-visible kullanmak daha iyi) */
-.time-option input[type="radio"]:focus-visible + label {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-/* --- Zaman Seçenekleri Stilleri Sonu --- */
-
-.log-input-box h4 {
-    margin-top: 0;
-    margin-bottom: 10px; /* Başlık altı boşluk */
-    text-align: center;
-    color: var(--primary-color);
-    font-weight: 600;
-    font-size: 1.2em;
-}
-
-.input-row {
+/* --- Input Row & Jira Styling (Corrected) --- */
+.log-input-box .input-row {
     display: flex;
     gap: 10px;
+    align-items: flex-start; /* Align items to the top */
 }
 
+/* Wrapper for text input and its results */
+.log-input-box .jira-input-wrapper {
+    flex-grow: 1; /* Allow wrapper to take available space */
+    position: relative; /* Needed for absolute positioning of results */
+    display: flex; /* Needed for 100% width input */
+    flex-direction: column; /* Stack input and results */
+}
+
+/* General modal input styles */
 .log-input-box input[type="text"] {
     padding: 12px;
     border: 1px solid var(--input-border);
     background-color: var(--input-bg);
     color: var(--input-text-color);
-    border-radius: 6px;
-    font-size: 1rem;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, border-radius 0.1s ease; /* Added border-radius transition */
+    line-height: 1.4;
+    width: 100%; /* Make inputs take full width of their container */
 }
 .log-input-box input[type="text"]:focus {
     outline: none;
@@ -631,96 +204,124 @@ body.dragging-log * {
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
 
-/* index.html'deki gibi input genişlikleri */
-.log-input-box input#log-text-input {
-    flex-grow: 3;
-}
-.log-input-box input#log-time-input {
-    flex-grow: 1;
-    min-width: 80px; /* Saat alanı için minimum genişlik */
-    max-width: 100px; /* Sabit genişlik kaldırıldı, esnek ama limitli */
-    text-align: center; /* Saat ortalansın */
+/* Text input specific adjustments */
+.log-input-box #log-text-input {
+    /* Takes full width due to parent wrapper */
+    margin-bottom: 0; /* Remove margin if results are directly below */
 }
 
-.log-input-box .button-group {
-    display: flex;
-    justify-content: flex-end; /* Butonları sağa yasla */
-    gap: 10px;
-    margin-top: 15px; /* Biraz daha boşluk */
-    padding-top: 15px; /* Üstüne çizgi için */
-    border-top: 1px solid var(--border-color); /* Ayırıcı çizgi */
-}
-
-/* Sil butonu sola yaslı */
-#delete-log-button {
-    margin-right: auto;
-}
-
-.log-input-box button {
-    padding: 9px 18px; /* Biraz daha küçük butonlar */
-    border: 1px solid transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    display: inline-flex; /* İkonları hizalamak için */
-    align-items: center;
-    gap: 6px; /* İkon ve metin arası boşluk */
-}
-
-.log-input-box button#save-log-button {
-    background-color: var(--button-copy); /* Yeşil kaydet butonu */
-    color: #ffffff;
-    border-color: var(--button-copy);
-}
-.log-input-box button#save-log-button:hover {
-    background-color: var(--button-copy-hover-bg);
-    border-color: var(--button-copy-hover-bg);
-}
-
-.log-input-box button#cancel-log-button {
-    background-color: transparent; /* Şeffaf iptal */
-    color: var(--text-secondary-color);
-    border-color: var(--border-color);
-}
-.log-input-box button#cancel-log-button:hover {
-    background-color: var(--hover-bg-color);
-    border-color: var(--text-secondary-color);
-    color: var(--text-color);
-}
-/* Sil butonu için danger class'ı yukarıda tanımlandı */
-
-/* Hata mesajı stili */
-.log-input-box .error {
-    color: var(--error-color);
-    font-size: 0.8rem;
-    margin-top: -10px; /* Butonlara daha yakın */
-    margin-bottom: -5px;
+/* Time input specific adjustments */
+.log-input-box #log-time-input {
+    flex-shrink: 0; /* Prevent shrinking */
+    width: 100px; /* Fixed width */
+    max-width: 100px;
     text-align: center;
-    min-height: 1.2em;
-    width: 100%;
 }
 
-/* --- Küçük Bildirim Kutusu --- */
-#toast-notification {
-    position: fixed;
-    bottom: -100px; /* Başlangıçta ekran dışında */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--content-bg); /* #21262d yerine */
-    color: var(--text-color);
-    padding: 12px 25px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    font-size: 14px;
-    z-index: 1001;
-    opacity: 0;
-    transition: opacity 0.4s ease, bottom 0.4s ease; /* bottom animasyonu eklendi */
-    pointer-events: none;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+/* --- Inline Jira Search Results Styling (Corrected Positioning) --- */
+#jira-search-results-container {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position directly below the wrapper's input */
+    left: 0;
+    width: 100%; /* Match the width of the wrapper */
+    background-color: var(--modal-box-bg);
+    border: 1px solid var(--primary-color);
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1010;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    margin: 0;
 }
-#toast-notification.show {
-    opacity: 1;
-    bottom: 20px; /* Görünür konuma gelsin */
+
+/* Adjust text input's bottom border radius when results are visible */
+.log-input-box .jira-input-wrapper input#log-text-input:focus {
+     /* Keep existing focus styles */
+     /* Dynamically adjust radius if results container is not empty */
+     border-bottom-left-radius: 0;
+     border-bottom-right-radius: 0;
+     z-index: 1011; /* Ensure input border is above dropdown border */
 }
+/* This selector might need JS assistance if ':has()' is not supported */
+.jira-input-wrapper:has(#jira-search-results-container:not(:empty)) input#log-text-input:focus {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+
+#jira-search-results-container ul { list-style: none; padding: 0; margin: 0; }
+.jira-result-item { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; transition: background-color 0.15s ease; border-bottom: 1px solid var(--log-separator-color); font-size: 0.92em; color: var(--text-color); }
+.jira-result-item:last-child { border-bottom: none; }
+.jira-result-item:hover, .jira-result-item.selected { background-color: var(--primary-color); color: var(--bg-color); }
+.jira-result-key { font-weight: 600; color: var(--primary-color); margin-right: 8px; flex-shrink: 0; background-color: rgba(88, 166, 255, 0.1); padding: 1px 4px; border-radius: 3px; transition: background-color 0.15s ease, color 0.15s ease; }
+.jira-result-item:hover .jira-result-key, .jira-result-item.selected .jira-result-key { background-color: rgba(13, 17, 23, 0.7); color: #ffffff; }
+.jira-result-summary { color: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
+.jira-loading, .jira-error, .jira-no-results { padding: 10px 12px; color: var(--text-secondary-color); font-style: italic; font-size: 0.9em; text-align: center; }
+.jira-loading i { margin-right: 5px; }
+.jira-error { color: var(--error-color); font-style: normal; }
+
+
+.log-input-box .button-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+#delete-log-button { margin-right: auto; }
+.log-input-box button { padding: 8px 16px; border: 1px solid transparent; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
+.log-input-box button:hover { filter: brightness(1.1); }
+.log-input-box button:active { transform: scale(0.97); filter: brightness(0.95); }
+.log-input-box button#save-log-button { background-color: var(--button-copy); color: #ffffff; border-color: var(--button-copy); }
+.log-input-box button#save-log-button:hover { background-color: var(--button-copy-hover-bg); border-color: var(--button-copy-hover-bg); }
+.log-input-box button#cancel-log-button { background-color: transparent; color: var(--text-secondary-color); border-color: var(--border-color); }
+.log-input-box button#cancel-log-button:hover { background-color: var(--hover-bg-color); border-color: var(--text-secondary-color); color: var(--text-color); }
+.log-input-box .error { color: var(--error-color); font-size: 0.8rem; margin-top: -10px; margin-bottom: -5px; text-align: center; min-height: 1.2em; width: 100%; }
+@keyframes savedPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); background-color: var(--button-copy-hover-bg); } 100% { transform: scale(1); } }
+.log-input-box button#save-log-button.saved-animation { animation: savedPulse 0.6s ease-out; }
+
+/* --- Settings View --- */
+#settings-view h2 { text-align: center; color: var(--primary-color); margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.settings-section { background-color: var(--content-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 1px 3px var(--shadow-color); }
+.settings-section h3 { margin-top: 0; margin-bottom: 20px; color: var(--text-secondary-color); font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.setting-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+.setting-item label { flex-basis: 180px; font-weight: 500; font-size: 0.9em; color: var(--text-color); flex-shrink: 0;}
+.setting-item input[type="color"], .setting-item input[type="text"], .setting-item input[type="url"], .setting-item input[type="email"], .setting-item input[type="password"] { padding: 8px 12px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text-color); border-radius: 6px; font-size: 0.9rem; flex-grow: 1; min-width: 200px; box-sizing: border-box; }
+.setting-item input[type="color"] { padding: 2px; height: 38px; cursor: pointer; min-width: 50px; flex-grow: 0; }
+.setting-item input[type="text"]:focus, .setting-item input[type="url"]:focus, .setting-item input[type="email"]:focus, .setting-item input[type="password"]:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2); }
+.setting-item.checkbox-item { align-items: flex-start; }
+.setting-item.checkbox-item label { flex-basis: auto; cursor: pointer; margin-top: 3px;}
+.setting-item.checkbox-item input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 6px; }
+.setting-item .tooltip-link { color: var(--text-secondary-color); text-decoration: none; border: 1px solid var(--border-color); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8em; margin-left: 5px; flex-shrink: 0;}
+.setting-item .tooltip-link:hover { background-color: var(--hover-bg-color); color: var(--text-color); }
+.settings-section button { margin-top: 10px; }
+.button-primary { background-color: var(--primary-color); color: var(--bg-color); border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;}
+.button-primary:hover { background-color: #4a9dec; }
+.button-secondary { background-color: var(--hover-bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;}
+.button-secondary:hover { background-color: var(--border-color); }
+.settings-note { font-size: 0.85em; color: var(--text-secondary-color); margin-top: -10px; margin-bottom: 15px; line-height: 1.4; }
+.save-status { text-align: center; margin-top: 15px; font-weight: 500; color: var(--button-copy); display: none; }
+.setting-item.file-input-item { gap: 10px; align-items: flex-start; }
+.setting-item.file-input-item label { flex-basis: auto; margin-bottom: 5px; margin-top: 3px;}
+.setting-item.file-input-item input[type="file"] { flex-basis: auto; flex-grow: 1; border: none; padding: 5px 0; background: transparent; color: var(--text-color); }
+.setting-item.file-input-item button { flex-shrink: 0; }
+.import-warning { font-size: 0.85em; margin-top: 5px; line-height: 1.4;}
+
+/* --- AI Chat Window --- */
+#ai-chat-window { position: absolute; bottom: 20px; right: 20px; width: 350px; height: 450px; background-color: var(--modal-box-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); z-index: 999; display: none; flex-direction: column; overflow: hidden; }
+#ai-chat-window h4 { margin: 0; padding: 10px 15px; background-color: var(--content-bg); border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--primary-color); display: flex; align-items: center; gap: 8px; font-size: 1em; }
+#ai-chat-messages { flex-grow: 1; overflow-y: auto; padding: 15px; font-size: 0.9em; }
+.chat-message { margin-bottom: 12px; padding: 8px 12px; border-radius: 12px; max-width: 85%; line-height: 1.4; word-wrap: break-word; }
+.user-message { background-color: var(--primary-color); color: var(--bg-color); margin-left: auto; border-bottom-right-radius: 2px; }
+.ai-message { background-color: var(--hover-bg-color); color: var(--text-color); margin-right: auto; border-bottom-left-radius: 2px; }
+.ai-chat-input { display: flex; border-top: 1px solid var(--border-color); padding: 10px; }
+#ai-chat-input-field { flex-grow: 1; padding: 8px 10px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text-color); border-radius: 4px; font-size: 0.9em; margin-right: 8px; }
+#ai-chat-send-button { background-color: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 0 12px; cursor: pointer; font-size: 1.1em; transition: background-color 0.2s ease; }
+#ai-chat-send-button:hover { background-color: #4a9dec; }
+.chat-close-button { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 1.6em; color: var(--text-secondary-color); cursor: pointer; padding: 0; line-height: 1; opacity: 0.7; }
+.chat-close-button:hover { opacity: 1; color: var(--text-color); }
+
+/* --- Toast Notification --- */
+#toast-notification { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background-color: var(--content-bg); color: var(--text-color); padding: 10px 20px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 14px; z-index: 1001; opacity: 0; transition: opacity 0.4s ease, bottom 0.4s ease; pointer-events: none; box-shadow: 0 3px 10px var(--shadow-color); }
+#toast-notification.show { opacity: 1; bottom: 20px; }
+
+/* --- Scroll To Today Highlight --- */
+.day-item.today-highlight { outline: 2px solid var(--primary-color); outline-offset: -1px; box-shadow: 0 0 15px rgba(88, 166, 255, 0.4); transition: outline 0.5s ease-out, box-shadow 0.5s ease-out; }
+.day-item.holiday.today-highlight { outline: none; box-shadow: none; }
+/* --- END OF FILE EfforLogger/css/log_dark_theme.css --- */

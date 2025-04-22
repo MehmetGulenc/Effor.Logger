@@ -103,27 +103,50 @@ input[type="text"]#log-text-input-popup:focus {
 .time-options-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Reduced gap */
+    gap: 10px; /* Increased gap slightly */
 }
 
 .time-option input[type="radio"] {
     opacity: 0; position: fixed; width: 0;
 }
 
+/* --- UPDATED --- */
 .time-option label {
-    display: inline-block; padding: 5px 12px; /* Adjusted padding */
-    background-color: var(--input-bg); border: 1px solid var(--border-color);
-    border-radius: 16px; /* Pill shape */ cursor: pointer; font-size: 0.8em; /* Smaller font */
-    color: var(--text-secondary-color);
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; user-select: none;
+    display: inline-block;
+    padding: 8px 18px; /* Increased padding for larger buttons */
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 18px; /* Pill shape */
+    cursor: pointer;
+    font-size: 0.9em; /* Slightly larger font */
+    font-weight: 500; /* Make text slightly bolder */
+    color: var(--text-color); /* Changed from secondary to primary text color for better contrast */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    user-select: none;
 }
+
 .time-option input[type="radio"]:checked + label {
-    background-color: var(--primary-color); color: var(--bg-color); /* Dark bg for contrast */
-    border-color: var(--primary-color); font-weight: 500;
+    background-color: var(--primary-color);
+    color: #ffffff; /* Explicit white text on selected blue */
+    border-color: var(--primary-color);
+    font-weight: 600; /* Even bolder when selected */
 }
-.time-option label:hover { border-color: var(--text-color); color: var(--text-color); }
-.time-option input[type="radio"]:checked + label:hover { background-color: #4a9dec; border-color: #4a9dec; }
-.time-option input[type="radio"]:focus-visible + label { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+.time-option label:hover {
+    border-color: var(--text-color);
+    background-color: var(--hover-bg-color); /* Add subtle hover background */
+    color: var(--text-color); /* Ensure color stays primary on hover */
+}
+.time-option input[type="radio"]:checked + label:hover {
+     background-color: #4a9dec;
+     border-color: #4a9dec;
+     color: #ffffff; /* Keep white on hover when selected */
+}
+.time-option input[type="radio"]:focus-visible + label {
+     outline: 2px solid var(--primary-color);
+     outline-offset: 2px;
+}
+/* --- END UPDATED --- */
+
 
 /* --- Butonlar ve Diğerleri --- */
 button#save-button-popup { /* ID güncellendi */

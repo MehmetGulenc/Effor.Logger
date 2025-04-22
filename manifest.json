@@ -1,24 +1,21 @@
-// --- START OF FILE EfforLogger/manifest.json ---
 {
   "manifest_version": 3,
-  "name": "Efor Kayıt Aracı v1.2",
-  "version": "1.2",
-  "description": "Günlük eforları akıcı bir şekilde kaydedin, takvimde ve özetlerde görüntüleyin.",
+  "name": "Efor Kayıt Aracı v1.4.1",
+  "version": "1.4.1",
+  "description": "Gelişmiş UI/UX ile eforları kaydedin, takvimde ve özetlerde görüntüleyin.",
   "permissions": [
-    "storage",        // For saving logs and settings
-    "scripting",      // Needed for content scripts? (Verify necessity)
-    "clipboardWrite", // For copying day logs
-    "notifications",  // For end-of-day reminders (optional)
-    "alarms"          // For scheduling reminders (optional)
-    // "identity"      // Potentially needed for Jira OAuth
-    // "calendar"      // Potentially needed for silent mode based on events (very advanced)
+    "storage",
+    "clipboardWrite",
+    "notifications", 
+    "alarms"
   ],
   "host_permissions": [
-    // "<all_urls>" // Keep if content script needed, otherwise remove if only FAB used
-    // "https://*.atlassian.net/*" // Example if integrating with Jira Cloud directly
+     "https://*.atlassian.net/*",
+     "https://nabusoft.atlassian.net/*"
   ],
   "background": {
-    "service_worker": "js/background.js"
+    "service_worker": "js/background.js",
+    "type": "module"
   },
   "action": {
     "default_popup": "html/popup.html",
@@ -27,13 +24,17 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Yeni Efor Kaydet" // Tooltip for the action icon
+    "default_title": "Yeni Efor Kaydet"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"], // Consider making this more specific if possible
-      "js": ["js/jquery-3.7.1.min.js", "js/content.js"], // Load jQuery if needed by content.js
-      "css": ["css/content.css"]
+      "matches": ["<all_urls>"],
+      "js": [
+         "js/jquery-3.7.1.min.js",
+         "js/content.js"
+      ],
+      "css": ["css/content.css"],
+      "run_at": "document_idle"
     }
   ],
   "icons": {
@@ -45,30 +46,30 @@
     {
       "resources": [
         "html/log.html",
-        "html/popup.html", // Make popup accessible if needed? Usually not required.
-        "css/log_dark_theme.css",
-        "css/log_light_theme.css",
-        "css/popup_dark_theme.css",
-        "css/popup_light_theme.css",
+        "html/popup.html",
+        "css/*",
+        "css/libs/*",
         "js/log.js",
         "js/popup.js",
-        "js/jquery-3.7.1.min.js",
+        "js/libs/*",
         "holidays.json",
-        "icons/*", // Make icons accessible
-        "fonts/*" // Allow access to local Font Awesome if used
+        "icons/*",
+        "fonts/*",
+        "webfonts/*"
       ],
-      "matches": ["<all_urls>"] // Keep broad or restrict if possible
+      "matches": ["<all_urls>"]
     }
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; font-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com;"
+  },
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+E", // Example shortcut to open popup
+        "default": "Ctrl+Shift+E",
         "mac": "Command+Shift+E"
       },
       "description": "Efor Kayıt Popup'ını Aç"
     }
-    // Add command to open log page?
-    // "open_log_page": { ... }
   }
 }

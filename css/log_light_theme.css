@@ -33,7 +33,7 @@
     --link-color: var(--primary-color); /* Bağlantı rengi */
     --error-color: var(--button-danger); /* Hata mesajı rengi */
 
-    /* Özel Light Tema Ayarları */
+    /* Özel Light Tema Ayarları (Overridable by settings) */
     --weekend-bg-color: #fcfcfd;      /* Hafta Sonu (Çok hafif farklı beyaz/gri) */
     --saturday-bg-color: #fdfdfe;     /* Cumartesi (Biraz daha farklı) */
     --holiday-bg-color: #f0f7ff;      /* Tatil Günü Arka Planı (Çok Açık Mavi) */
@@ -135,6 +135,7 @@ body {
     overflow: hidden; /* View'ların taşmasını engelle */
     height: 100%;
     display: flex; /* İçindeki view'ı esnetmek için */
+     position: relative; /* Needed for absolute positioning of views/modal */
 }
 
 .view {
@@ -142,14 +143,50 @@ body {
     width: 100%;
     height: 100%;
     overflow-y: auto; /* Gerekirse view içinde scroll */
-    padding: 20px; /* View'lara padding ver */
+    padding: 25px; /* View'lara padding ver */
     box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out; /* Fade transition */
+    position: absolute; /* Overlap views for transition */
+    top: 0; left: 0; right: 0; bottom: 0;
 }
 
 .view.active {
     display: flex; /* Aktif görünümü göster (flex ile içerik yönetimi) */
     flex-direction: column; /* İçerik alt alta dizilsin */
+    opacity: 1; /* Fully visible */
+    position: relative; /* Take up space in the flex container */
+    z-index: 1; /* Ensure it's above other non-active views */
 }
+
+/* Loading Spinner */
+body.light-theme .loading-spinner {
+    border: 4px solid var(--border-color);
+    border-left-color: var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 50px auto;
+    flex-shrink: 0; /* Spinner should not shrink */
+    align-self: center; /* Center vertically */
+    justify-self: center; /* Center horizontally */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+body.light-theme .loading-text {
+    text-align: center;
+    color: var(--text-secondary-color);
+    margin-top: 30px;
+    font-size: 1.1em;
+    flex-shrink: 0;
+    align-self: center;
+    justify-self: center;
+}
+
 
 /* --- Calendar View --- */
 #calendar-view {
@@ -201,31 +238,29 @@ body {
     overflow: hidden; /* İçerik taşmasın */
 }
 
-.day-item.disabled-day {
-    background-color: var(--bg-color); /* Ana arkaplan gibi (çok açık gri) */
-    opacity: 0.8; /* Biraz soluklaştır */
-    cursor: not-allowed; /* Tıklanamaz imleci */
-}
-.day-item.holiday {
-    background-color: var(--holiday-bg-color); /* Tatil günü arka planı */
-}
+/* YENİ: Tema renkleri uygulanacak */
 .day-item.weekend {
-    background-color: var(--weekend-bg-color); /* Pazar arka planı */
+    background-color: var(--weekend-bg-color);
 }
 .day-item.saturday {
-    background-color: var(--saturday-bg-color); /* Cumartesi arka planı */
+    background-color: var(--saturday-bg-color);
+}
+.day-item.holiday {
+    background-color: var(--holiday-bg-color);
+    opacity: 0.85; /* Hafif soluklaştır */
+    cursor: default; /* Tatil günleri tıklanamaz */
 }
 
 
 /* Tatil günlerinin üzerine gelince vurguyu kaldır */
-.day-item.disabled-day:hover {
+.day-item.holiday:hover {
     border-color: var(--border-color); /* Kenarlık değişmesin */
-    /* Arka plan değişmesin (veya hafifçe değişebilir) */
+    background-color: var(--holiday-bg-color); /* Arka plan değişmesin */
 }
 
 /* Tatil günü başlığı */
-.day-item.disabled-day .day-header {
-    color: var(--text-secondary-color); /* Metin soluk */
+.day-item.holiday .day-header {
+    color: var(--text-secondary-color); /* Belki başlık rengini biraz soluklaştırabiliriz */
     /* Arka planı da hafif değiştirebiliriz */
     /* background-color: #fafbfc; */
 }
@@ -251,23 +286,23 @@ body {
 .no-logs.holiday-info {
     color: var(--text-secondary-color);
     font-weight: 500;
+    cursor: default; /* Tatilde tıklanamaz */
 }
 
-.no-logs:not(.holiday-info):hover {
-    /* Tatil bilgisi değilse hover efekti ver */
-    background-color: var(--hover-bg-color);
-    color: var(--text-color);
+.no-logs.holiday-info:hover {
+     background-color: inherit; /* Tatilde hover efekti olmasın */
 }
 
-.day-item.disabled-day .no-logs {
-    cursor: not-allowed; /* Tatilde tıklanamaz */
+.no-logs:not(.holiday-info) { /* Tatil bilgisi değilse */
+    cursor: pointer; /* Tıklanabilir olduğunu göster */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.no-logs:not(.holiday-info):hover { /* Tatil değilse hover */
+     background-color: var(--hover-bg-color); /* Hafif gri hover */
 }
 
-.day-item.disabled-day .no-logs:hover {
-    background-color: inherit; /* Tatilde hover efekti olmasın */
-}
 
-.day-item:not(.disabled-day):hover { /* Sadece tıklanabilir günlerde hover */
+.day-item:not(.holiday):hover { /* Sadece tıklanabilir günlerde hover */
     border-color: var(--primary-color); /* Hover'da kenarlık rengi mavi */
     background-color: var(--hover-bg-color); /* Hafif gri arka plan */
 }
@@ -360,6 +395,10 @@ body {
     background-color: rgba(9, 105, 218, 0.1); /* Hafif mavi arka plan */
     opacity: 1 !important; /* Opaklığı tam yap */
 }
+.day-buttons button.copy-to-next-day:hover {
+     color: var(--primary-color); /* Klonlama butonu mavi */
+     background-color: rgba(9, 105, 218, 0.1); /* Hafif mavi arka plan */
+}
 
 
 .log-list {
@@ -380,6 +419,160 @@ body {
     cursor: grab; /* Sürükleme imleci */
     transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Smooth transitions */
 }
+.log-item .jira-icon {
+    position: relative;
+    margin-left: 8px;
+    color: var(--primary-color);
+    opacity: 0.7;
+    font-size: 0.9em;
+    cursor: help;
+    transition: opacity 0.2s ease;
+    order: 3; /* Flex sırasında en sona koy */
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+/* Hover durumunda göster */
+.log-item .jira-icon {
+    display: none; /* Varsayılan olarak gizle */
+}
+
+.log-item:hover .jira-icon {
+    display: inline-block; /* Hover durumunda göster */
+}
+
+/* Jira Modal Penceresi İyileştirmeleri */
+#jira-issue-modal-box {
+    background-color: var(--modal-box-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px var(--shadow-color);
+    padding: 25px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#jira-issue-modal-box h4 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#jira-issue-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+    overflow-y: auto;
+    max-height: calc(80vh - 120px);
+}
+
+.jira-issue-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    background-color: var(--bg-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.jira-issue-item:hover {
+    background-color: var(--hover-bg-color);
+}
+
+.jira-issue-key {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.jira-issue-summary {
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.jira-issue-list-empty {
+    text-align: center;
+    color: var(--text-secondary-color);
+    font-style: italic;
+    padding: 20px;
+}
+
+#jira-issue-error {
+    color: var(--error-color);
+    text-align: center;
+    padding: 10px;
+    background-color: rgba(207, 34, 46, 0.1);
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+#jira-modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.6em;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+#jira-modal-close-button:hover {
+    opacity: 1;
+    color: var(--text-color);
+}
+
+/* Jira butonuna modern tasarım */
+button.jira-select-button {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+button.jira-select-button:hover {
+    background-color: var(--hover-bg-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button.jira-select-button i {
+    color: #2684FF; /* Jira mavisi */
+}
 .log-item:not(.disabled-log):hover { /* Sadece tıklanabilir loglarda hover */
     background-color: var(--log-hover-bg); /* Hafif gri hover */
 }
@@ -394,6 +587,22 @@ body {
     line-height: 1.4;
     word-break: break-word; /* Uzun kelimeler kırılsın */
 }
+.log-emoji {
+    margin-right: 5px;
+    font-size: 1.1em; /* Slightly larger emoji */
+}
+.jira-icon {
+    margin-left: 8px; /* Jira icon spacing */
+    color: var(--primary-color); /* Jira blue */
+    opacity: 0.7;
+    font-size: 0.9em;
+    cursor: help; /* Indicate hoverable */
+    transition: opacity 0.2s ease;
+}
+.jira-icon:hover {
+    opacity: 1;
+}
+
 .log-time {
     font-weight: 500;
     background-color: var(--time-badge-bg); /* Açık gri rozet arkaplanı */
@@ -417,12 +626,10 @@ body {
     font-size: 0.85em;
     text-align: center;
     padding: 15px; /* Boşluk */
-    cursor: pointer; /* Tıklanabilir olduğunu göster */
-    transition: background-color 0.2s ease, color 0.2s ease;
+    /* Cursor handled by specific classes */
+    /* Transition handled by specific classes */
 }
-.no-logs:not(.holiday-info):hover { /* Tatil değilse hover */
-     background-color: var(--hover-bg-color); /* Hafif gri hover */
-}
+
 
 /* --- Drag & Drop Styles --- */
 .log-item.dragging {
@@ -433,18 +640,23 @@ body {
 
 /* Bırakma hedefi olan günün vurgusu (günler arası taşıma için) */
 .day-item.drag-over {
-     /* Kenarlığı belirginleştir */
-     /* background-color: rgba(9, 105, 218, 0.1); /* Hafif mavi arka plan */
-     /* veya sadece log listesini */
+     border-color: var(--primary-color); /* Kenarlığı belirginleştir */
 }
 .day-item.drag-over .log-list {
     background-color: rgba(208, 215, 222, 0.3); /* Daha belirgin açık gri */
     outline: 1px dashed var(--primary-color); /* Mavi kesik çizgi */
     outline-offset: -2px;
-    min-height: 30px;
+    min-height: 30px; /* Ensure drop target has height even if empty */
 }
 
-/* YENİ: Aynı gün içinde sıralama için görsel işaretçi */
+.day-item.action-highlight {
+    outline: 2px solid var(--button-copy); /* Yeşil outline */
+    outline-offset: -1px;
+    box-shadow: 0 0 15px rgba(63, 185, 80, 0.4); /* Yeşil gölge */
+    transition: outline 0.5s ease-out, box-shadow 0.5s ease-out;
+}
+
+/* YENİ: Aynı gün içinde sıralama için görsel işaretçi (Not implemented in JS D&D logic yet) */
 .log-list .drop-indicator {
     height: 2px;
     background-color: var(--primary-color); /* Mavi */
@@ -481,7 +693,7 @@ body.dragging-log * {
 }
 
 #log-entry-view span {
-    pointer-events: none;
+    pointer-events: none; /* Span içindeki tıklamayı parent'a ilet */
 }
 
 /* --- Log Input Overlay --- */
@@ -515,9 +727,10 @@ body.dragging-log * {
     flex-direction: column; /* İçerik alt alta */
     gap: 20px; /* İç elemanlar arası boşluk */
     width: 90%; /* Genişlik %90 */
-    max-width: 600px; /* MAKSİMUM genişlik */
+    max-width: 600px; /* MAKSIMUM genişlik */
     margin: auto; /* Flexbox ile zaten ortalanır */
     box-sizing: border-box; /* Padding dahil hesapla */
+    /* position: absolute; ve transform kaldırıldı, flexbox ortalar */
 }
 
 /* Sil butonu için danger class'ı */
@@ -559,12 +772,12 @@ body.dragging-log * {
 
 .time-option label {
     display: inline-block;
-    padding: 6px 14px; /* İç boşluk */
-    background-color: var(--input-bg); /* Beyaz arka plan */
+    padding: 8px 16px; /* Increased padding */
+    background-color: var(--bg-color); /* Light gray background */
     border: 1px solid var(--border-color); /* Açık gri kenarlık */
-    border-radius: 16px; /* Tamamen yuvarlak kenarlar (pill shape) */
+    border-radius: 18px; /* Match log modal */
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.9em; /* Slightly larger font */
     color: var(--text-secondary-color); /* Orta gri metin */
     transition: background-color 0.2s ease, color 0.2s ease,
     border-color 0.2s ease;
@@ -583,6 +796,7 @@ body.dragging-log * {
 .time-option label:hover {
     border-color: var(--text-secondary-color); /* Orta gri kenarlık */
     color: var(--text-color); /* Koyu gri metin */
+    background-color: var(--hover-bg-color); /* Hafif gri arka plan */
 }
 /* Seçili olana hover */
 .time-option input[type="radio"]:checked + label:hover {
@@ -686,6 +900,20 @@ body.dragging-log * {
 }
 /* Sil butonu için danger class'ı yukarıda tanımlandı */
 
+/* Jira Seç Butonu */
+body.light-theme button.jira-select-button {
+    background-color: var(--bg-color); /* Light gray */
+    color: var(--text-color); /* Dark gray */
+    border: 1px solid var(--border-color); /* Light border */
+    justify-content: center; /* Center content */
+}
+body.light-theme button.jira-select-button:hover {
+    background-color: var(--hover-bg-color); /* Slightly darker light gray */
+    border-color: var(--text-secondary-color); /* Medium gray */
+    color: var(--text-color); /* Dark gray */
+}
+
+
 /* Hata mesajı stili */
 .log-input-box .error {
     color: var(--error-color); /* Kırmızı */
@@ -697,8 +925,76 @@ body.dragging-log * {
     width: 100%;
 }
 
-/* --- Küçük Bildirim Kutusu --- */
-#toast-notification {
+/* --- Summary View --- */
+body.light-theme .summary-widget { box-shadow: 0 2px 5px var(--shadow-color); }
+body.light-theme #fun-facts-list li i { color: var(--primary-color); }
+
+/* --- Settings View --- */
+body.light-theme #settings-view h2 { text-align: center; color: var(--primary-color); margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+body.light-theme .settings-section {
+    background-color: var(--content-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px var(--shadow-color);
+}
+body.light-theme .settings-section h3 { margin-top: 0; margin-bottom: 20px; color: var(--text-secondary-color); font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+body.light-theme .setting-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+body.light-theme .setting-item label { flex-basis: 180px; /* Align labels */ font-weight: 500; font-size: 0.9em; color: var(--text-color); flex-shrink: 0;}
+body.light-theme .setting-item input[type="color"], body.light-theme .setting-item input[type="text"], body.light-theme .setting-item input[type="url"], body.light-theme .setting-item input[type="email"], body.light-theme .setting-item input[type="password"] {
+    padding: 8px 12px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--input-text-color); border-radius: 6px; font-size: 0.9rem; flex-grow: 1; min-width: 200px;
+}
+body.light-theme .setting-item input[type="color"] { padding: 2px; height: 38px; cursor: pointer; min-width: 50px; flex-grow: 0; }
+body.light-theme .setting-item.checkbox-item label { flex-basis: auto; cursor: pointer; margin-top: 3px;}
+body.light-theme .setting-item.checkbox-item input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 6px;}
+body.light-theme .setting-item .tooltip-link { color: var(--text-secondary-color); text-decoration: none; border: 1px solid var(--border-color); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; justify-content: center; align-items: center; font-size: 0.8em; margin-left: 5px; flex-shrink: 0;}
+body.light-theme .setting-item .tooltip-link:hover { background-color: var(--hover-bg-color); color: var(--text-color); }
+body.light-theme .settings-section button { margin-top: 10px; }
+body.light-theme .button-primary { background-color: var(--primary-color); color: #ffffff; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;}
+body.light-theme .button-primary:hover { background-color: #055cc6; }
+body.light-theme .button-secondary { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;}
+body.light-theme .button-secondary:hover { background-color: var(--hover-bg-color); border-color: var(--text-secondary-color); }
+body.light-theme .settings-note { font-size: 0.85em; color: var(--text-secondary-color); margin-top: -10px; margin-bottom: 15px; line-height: 1.4; }
+body.light-theme .save-status { text-align: center; margin-top: 15px; font-weight: 500; color: var(--button-copy); }
+body.light-theme .setting-item.file-input-item { gap: 10px; align-items: flex-start; }
+body.light-theme .setting-item.file-input-item label { flex-basis: auto; margin-bottom: 5px; margin-top: 3px;}
+body.light-theme .setting-item.file-input-item input[type="file"] { flex-basis: auto; flex-grow: 1; border: none; padding: 5px 0; background: transparent; }
+body.light-theme .setting-item.file-input-item button { flex-shrink: 0; }
+body.light-theme .import-warning { font-size: 0.85em; margin-top: 5px; line-height: 1.4;}
+
+
+/* --- AI Chat Window --- */
+body.light-theme #ai-chat-window {
+    box-shadow: 0 5px 20px rgba(100, 100, 100, 0.15);
+    background-color: var(--modal-box-bg); /* White */
+}
+body.light-theme #ai-chat-window h4 {
+    background-color: var(--bg-color); /* Light gray */
+    border-bottom-color: var(--border-color);
+}
+body.light-theme .user-message {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+body.light-theme .ai-message {
+    background-color: var(--hover-bg-color); /* Off-white */
+    color: var(--text-color);
+}
+body.light-theme #ai-chat-input { border-top-color: var(--border-color); }
+body.light-theme #ai-chat-input-field {
+    border-color: var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text-color);
+}
+body.light-theme #ai-chat-send-button { background-color: var(--primary-color); color: #ffffff; }
+body.light-theme #ai-chat-send-button:hover { background-color: #055cc6; }
+body.light-theme .chat-close-button { color: var(--text-secondary-color); }
+body.light-theme .chat-close-button:hover { color: var(--text-color); }
+
+
+/* --- Small Toast Notification --- */
+body.light-theme #toast-notification {
     position: fixed;
     bottom: -100px; /* Başlangıçta ekran dışında */
     left: 50%;
@@ -715,7 +1011,7 @@ body.dragging-log * {
     pointer-events: none;
     box-shadow: 0 4px 12px var(--shadow-color); /* Daha yumuşak gölge */
 }
-#toast-notification.show {
+body.light-theme #toast-notification.show {
     opacity: 1;
     bottom: 20px; /* Görünür konuma gelsin */
 }
